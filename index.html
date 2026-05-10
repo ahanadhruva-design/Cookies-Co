@@ -205,17 +205,9 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
       <button class="btnadd" onclick="addVideoSlot()">+ Add Another Video</button>
     </div>
 
-    <!-- Add Item -->
-    <p class="atitle">Add a New Item</p>
-    <div class="infobox">💡 Items added here show on <strong>your device only</strong>. To add items everyone sees, ask Claude to update your GitHub file!</div>
-    <div class="agrid">
-      <div><label class="lbl">Item Name</label><input type="text" id="aN" placeholder="e.g. Chocolate Chip Cookies"/></div>
-      <div><label class="lbl">Price</label><input type="text" id="aP" placeholder="$4.00"/></div>
-      <div><label class="lbl">Category</label><select id="aC"><option>Baked Goods</option><option>Friendship Bracelets</option><option>Toys &amp; Fun Things</option></select></div>
-      <div><label class="lbl">Photo URL (optional)</label><input type="text" id="aPh" placeholder="Paste an image link here"/></div>
-      <div class="full"><label class="lbl">Description</label><textarea id="aD" placeholder="What makes this item special?"></textarea></div>
-    </div>
-    <button class="btnadd" onclick="addItem()">+ Add to Shop</button>
+    <p class="atitle">Add / Edit / Delete Items</p>
+    <div class="infobox">✅ Items are now managed in your Google Sheet! Click the button below to open it. Add a row to add an item, edit a row to change it, or delete a row to remove it. Then refresh your website to see the changes!</div>
+    <button class="btnadd" onclick="addItem()">📊 Open My Google Sheet</button>
 
     <!-- Orders -->
     <p class="atitle">Customer Orders</p>
@@ -600,11 +592,8 @@ function saveEdit(){
 }
 function deleteItem(id){
   closeAllDots();
-  if(!confirm('Delete this item? You can always ask Claude to add it back!'))return;
-  deletedIds.push(id);
-  localStorage.setItem('cc_deleted',JSON.stringify(deletedIds));
-  items=items.filter(i=>i.id!==id);
-  doFilter(cf,null);
+  if(!confirm('To delete this item, you\'ll remove its row from your Google Sheet. Click OK to open your sheet!'))return;
+  window.open('https://docs.google.com/spreadsheets/d/1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o/edit','_blank');
 }
 
 // ── Checkout ─────────────────────────────────
@@ -647,13 +636,8 @@ function rec(method){
   showS(4);renderOrders();
 }
 function addItem(){
-  const n=document.getElementById('aN').value.trim(),p=document.getElementById('aP').value.trim();
-  if(!n||!p){alert('Please enter a name and price!');return;}
-  const amt=parseFloat(p.replace(/[^0-9.]/g,''))||0;
-  const ni={id:Date.now(),name:n,price:'$'+amt.toFixed(2),amt,cat:document.getElementById('aC').value,desc:document.getElementById('aD').value.trim(),ph:document.getElementById('aPh').value.trim()};
-  extraItems.push(ni);items.push(ni);localStorage.setItem('cc_extra',JSON.stringify(extraItems));
-  doFilter(cf,null);['aN','aP','aD','aPh'].forEach(x=>document.getElementById(x).value='');
-  alert('✅ Added on this device! Ask Claude to add it permanently for everyone.');
+  window.open('https://docs.google.com/spreadsheets/d/1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o/edit','_blank');
+  alert('Your Google Sheet is opening! Add a new row with your item details. Then come back and refresh the website to see it!');
 }
 function renderOrders(){
   const el=document.getElementById('ordersBox');
