@@ -383,7 +383,11 @@ async function loadSheetItems(){
       const row={};headers.forEach((h,j)=>row[h]=(cols[j]||'').replace(/^"|"$/g,''));
       const amt=parseFloat(row.price)||0;
       return{id:i+1,name:row.name||'',price:'$'+amt.toFixed(2),amt,cat:row.category||'Baked Goods',desc:row.description||'',ph:row.photo||''};
-    }).filter(i=>i.name);
+    }).filter(i=>{
+      if(!i.name) return false;
+      const hidden = JSON.parse(localStorage.getItem('cc_hidden')||'[]');
+      return !hidden.includes(i.name);
+    });
     doFilter('all',null);
   } catch(e) {
     console.error('Could not load sheet:', e);
@@ -593,8 +597,13 @@ function saveEdit(){
 }
 function deleteItem(id){
   closeAllDots();
-  if(!confirm('To delete this item, you\'ll remove its row from your Google Sheet. Click OK to open your sheet!'))return;
-  window.open('https://docs.google.com/spreadsheets/d/1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o/edit','_blank');
+  const item = items.find(i=>i.id===id);
+  if(!confirm(`Delete "${item.name}" from your website?\n\nThis hides it immediately. To remove it for everyone permanently, also delete its row from your Google Sheet!`))return;
+  let hidden = JSON.parse(localStorage.getItem('cc_hidden')||'[]');
+  hidden.push(item.name);
+  localStorage.setItem('cc_hidden', JSON.stringify(hidden));
+  items = items.filter(i=>i.id!==id);
+  doFilter(cf,null);
 }
 
 // ── Checkout ─────────────────────────────────
