@@ -9,14 +9,10 @@
 :root{--pk:#e8a0b4;--pkl:#fdf0f4;--pkd:#c26b8a;--cr:#fdf8f3;--br:#5c3d2e;--tx:#2d2020;--mu:#7a6060;--bd:#e8ddd8;--wh:#fff;--se:'Playfair Display',Georgia,serif;--sa:'Lato',Arial,sans-serif}
 body{font-family:var(--sa);background:var(--cr);color:var(--tx)}
 .topbar{background:var(--pk);padding:8px 0;text-align:center;font-size:13px;color:#fff;letter-spacing:.5px}
-
-/* ANNOUNCEMENT BANNER */
 .announce{display:none;padding:11px 24px;text-align:center;font-size:14px;font-weight:700;letter-spacing:.3px}
 .announce.warn{background:#fef3c7;color:#92400e;border-bottom:1px solid #fde68a;display:block}
 .announce.info{background:#dbeafe;color:#1e40af;border-bottom:1px solid #bfdbfe;display:block}
 .announce.closed{background:#fee2e2;color:#991b1b;border-bottom:1px solid #fecaca;display:block}
-
-/* ADMIN */
 .abar{background:#3b2314;color:#fff;padding:10px 24px;display:none;justify-content:space-between;align-items:center;font-size:13px}
 .abar.on{display:flex}.abar a{color:var(--pk);text-decoration:none;font-weight:700;margin-left:16px;cursor:pointer}
 .apanel{display:none;background:#fff9f5;border-bottom:2px solid var(--bd);padding:32px 24px}
@@ -28,30 +24,30 @@ body{font-family:var(--sa);background:var(--cr);color:var(--tx)}
 .ppbox{background:#e8f4fd;border:1.5px solid #93c5fd;border-radius:6px;padding:14px 18px;max-width:700px;margin-bottom:20px}
 .ppbox p{font-size:13px;color:#1e40af;margin-bottom:8px;line-height:1.5}
 .ppbox input{width:100%;padding:9px 13px;border:1.5px solid #93c5fd;border-radius:4px;font-size:14px;font-family:var(--sa);outline:none}
-
-/* NOTICE BOX IN ADMIN */
-.noticebox{background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:18px;max-width:700px;margin-bottom:20px}
-.noticebox p{font-size:13px;color:var(--mu);margin-bottom:12px;line-height:1.6}
+.noticebox,.vidbox{background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:18px;max-width:700px;margin-bottom:20px}
+.noticebox p,.vidbox p{font-size:13px;color:var(--mu);margin-bottom:12px;line-height:1.6}
 .notice-row{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}
 .notice-row input[type=text]{flex:1;min-width:200px;padding:9px 13px;border:1.5px solid var(--bd);border-radius:4px;font-size:14px;font-family:var(--sa);outline:none}
 .notice-row select{padding:9px 13px;border:1.5px solid var(--bd);border-radius:4px;font-size:14px;font-family:var(--sa);outline:none}
 .notice-row input[type=date]{padding:9px 13px;border:1.5px solid var(--bd);border-radius:4px;font-size:14px;font-family:var(--sa);outline:none}
 .active-notice{background:var(--pkl);border:1px solid var(--pk);border-radius:6px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--br);margin-bottom:8px}
-
 .btnadd{background:var(--pkd);color:#fff;border:none;padding:11px 28px;border-radius:4px;font-family:var(--sa);font-weight:700;font-size:14px;cursor:pointer;text-transform:uppercase;margin-top:10px}
 .btnadd:hover{background:var(--br)}
 .btnout{background:none;border:1.5px solid var(--bd);color:var(--mu);padding:7px 16px;border-radius:4px;font-family:var(--sa);font-weight:700;font-size:13px;cursor:pointer}
 .btnout:hover{border-color:var(--pkd);color:var(--pkd)}
-
-.atitle{font-family:var(--se);font-size:1.4rem;color:var(--br);margin-bottom:14px}
-
+.atitle{font-family:var(--se);font-size:1.4rem;color:var(--br);margin-bottom:14px;margin-top:28px}
 .otbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
 .otbl th{background:var(--cr);color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:9px 12px;text-align:left;border-bottom:1px solid var(--bd)}
 .otbl td{padding:10px 12px;border-bottom:1px solid var(--bd);vertical-align:top}
 .badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:700}
 .bpp{background:#dbeafe;color:#1e40af}.bca{background:#dcfce7;color:#15803d}.bip{background:#fef9c3;color:#854d0e}
 .del{background:none;border:none;color:#d1d5db;cursor:pointer;font-size:15px}.del:hover{color:#e24b4a}
-
+/* video rows in admin */
+.vid-row{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}
+.vid-row:last-child{border-bottom:none}
+.vid-row input{flex:1;padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none}
+.vid-row input:focus{border-color:var(--pk)}
+.vid-row .vnum{font-size:13px;font-weight:700;color:var(--mu);min-width:24px}
 /* HEADER */
 header{background:#fff;border-bottom:1px solid var(--bd)}
 .hdr{max-width:1100px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -60,30 +56,39 @@ header{background:#fff;border-bottom:1px solid var(--bd)}
 .srchbar{display:flex;align-items:center;border:1.5px solid var(--bd);border-radius:30px;overflow:hidden;background:var(--cr)}
 .srchbar input{border:none;background:transparent;padding:8px 16px;font-size:14px;font-family:var(--sa);outline:none;width:220px;color:var(--tx)}
 .srchbar button{background:var(--pk);border:none;padding:8px 16px;cursor:pointer;color:#fff;font-size:15px}
+/* NAV + DROPDOWN */
 nav{background:var(--br)}
-.navi{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap}
-nav a{display:block;padding:13px 18px;color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;transition:background .15s;white-space:nowrap;cursor:pointer}
-nav a:hover,nav a.act{background:var(--pkd);color:#fff}.navr{margin-left:auto}
-
+.navi{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;position:relative}
+nav>div>a,nav>div>.navi>a{display:block;padding:13px 18px;color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;transition:background .15s;white-space:nowrap;cursor:pointer}
+.navi>a{display:block;padding:13px 18px;color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;transition:background .15s;white-space:nowrap;cursor:pointer}
+.navi>a:hover,.navi>a.act{background:var(--pkd);color:#fff}
+.navr{margin-left:auto}
+.nav-dd{position:relative}
+.nav-dd>a{display:flex!important;align-items:center;gap:5px;padding:13px 18px;color:rgba(255,255,255,.85);text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;transition:background .15s;white-space:nowrap;cursor:pointer}
+.nav-dd>a::after{content:'▾';font-size:11px}
+.nav-dd:hover>a,.nav-dd>a:hover{background:var(--pkd);color:#fff}
+.dd-menu{display:none;position:absolute;top:100%;left:0;background:#2a1a0e;min-width:260px;z-index:300;box-shadow:0 8px 24px rgba(0,0,0,.3);border-top:2px solid var(--pkd)}
+.nav-dd:hover .dd-menu{display:block}
+.dd-menu a{display:flex;align-items:center;gap:10px;padding:12px 18px;color:rgba(255,255,255,.8);font-size:13px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07);text-decoration:none;transition:background .15s}
+.dd-menu a:hover{background:var(--pkd);color:#fff}
+.dd-coming{opacity:.55;font-style:italic}
 /* HERO */
 .hero{background:var(--pkl);border-bottom:1px solid var(--bd);padding:52px 24px;text-align:center}
 .hero h1{font-family:var(--se);font-size:2.8rem;color:var(--br);margin-bottom:12px}
 .hero p{font-size:1.05rem;color:var(--mu);max-width:540px;margin:0 auto 24px;line-height:1.7}
 .herobtn{background:var(--br);color:#fff;padding:13px 32px;border-radius:30px;font-weight:700;font-size:14px;letter-spacing:.6px;text-transform:uppercase;border:none;font-family:var(--sa);cursor:pointer;transition:background .15s}
 .herobtn:hover{background:var(--pkd)}
-
-/* HOURS NOTICE on hero */
 .hours-pill{display:inline-block;background:#fff;border:1.5px solid var(--bd);border-radius:20px;padding:7px 18px;font-size:13px;color:var(--mu);margin-bottom:18px}
 .hours-pill .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .dot-open{background:#22c55e}.dot-busy{background:#f59e0b}.dot-closed{background:#ef4444}
-
 .sec{max-width:1100px;margin:0 auto;padding:48px 24px}
 .sechdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;border-bottom:2px solid var(--bd);padding-bottom:12px}
 .sechdr h2{font-family:var(--se);font-size:1.7rem;color:var(--br)}
+/* CARDS */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:26px}
-.card{background:#fff;border:1px solid var(--bd);border-radius:4px;overflow:hidden;transition:box-shadow .15s;display:flex;flex-direction:column}
+.card{background:#fff;border:1px solid var(--bd);border-radius:4px;overflow:visible;transition:box-shadow .15s;display:flex;flex-direction:column;position:relative}
 .card:hover{box-shadow:0 4px 18px rgba(92,61,46,.1)}
-.cimg{width:100%;aspect-ratio:4/3;background:var(--pkl);display:flex;align-items:center;justify-content:center;font-size:3.2rem;overflow:hidden}
+.cimg{width:100%;aspect-ratio:4/3;background:var(--pkl);display:flex;align-items:center;justify-content:center;font-size:3.2rem;overflow:hidden;border-radius:4px 4px 0 0}
 .cimg img{width:100%;height:100%;object-fit:cover}
 .cbody{padding:16px;flex:1;display:flex;flex-direction:column}
 .cattag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--pkd);margin-bottom:6px}
@@ -93,13 +98,27 @@ nav a:hover,nav a.act{background:var(--pkd);color:#fff}.navr{margin-left:auto}
 .price{font-weight:700;font-size:1.05rem;color:var(--br)}
 .buybtn{background:var(--br);color:#fff;border:none;border-radius:20px;padding:8px 20px;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;text-transform:uppercase;font-family:var(--sa);transition:background .15s}
 .buybtn:hover{background:var(--pkd)}
-
+/* THREE DOTS */
+.card-dots-wrap{display:none;position:absolute;top:8px;right:8px;z-index:20}
+body.owner-on .card-dots-wrap{display:block}
+.card-dots-btn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.93);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--br);cursor:pointer;line-height:1;transition:background .15s}
+.card-dots-btn:hover{background:var(--pkd);color:#fff;border-color:var(--pkd)}
+.card-dots-menu{display:none;position:absolute;top:34px;right:0;background:#fff;border:1.5px solid var(--bd);border-radius:6px;box-shadow:0 4px 16px rgba(92,61,46,.15);min-width:130px;overflow:hidden;z-index:100}
+.card-dots-menu.open{display:block}
+.card-dots-menu button{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;background:none;border:none;font-family:var(--sa);font-size:13px;font-weight:700;color:var(--tx);cursor:pointer;text-align:left;border-bottom:1px solid var(--bd)}
+.card-dots-menu button:last-child{border-bottom:none;color:#dc2626}
+.card-dots-menu button:hover{background:var(--pkl)}
+.card-dots-menu button:last-child:hover{background:#fee2e2}
+/* VIDEOS */
 .vidsec{background:var(--pkl);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:22px}
 .vc{background:#fff;border:1px solid var(--bd);border-radius:4px;overflow:hidden}
-.vt{width:100%;aspect-ratio:16/9;background:var(--br);display:flex;align-items:center;justify-content:center}
+.vt{width:100%;aspect-ratio:16/9;background:var(--br);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.vt iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.vt-thumb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
 .play{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid #fff;display:flex;align-items:center;justify-content:center}
 .play::after{content:'';border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px}
+.vtlabel{color:rgba(255,255,255,.7);font-size:12px}
 .vb{padding:14px 16px}.vb p:first-child{font-family:var(--se);font-size:1rem;color:var(--br);margin-bottom:5px}
 .vb p:last-child{font-size:12px;color:var(--mu)}
 .aboutg{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;max-width:800px}
@@ -110,8 +129,7 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
 .ftlinks{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;margin:16px 0}
 .ftlinks a{color:rgba(255,255,255,.65);text-decoration:none;font-size:13px}
 .ftcopy{font-size:12px;color:rgba(255,255,255,.4);margin-top:18px}
-
-/* MODAL */
+/* MODALS */
 .overlay{display:none;position:fixed;inset:0;background:rgba(44,20,20,.55);z-index:1000;align-items:center;justify-content:center;padding:16px}
 .overlay.on{display:flex}
 .modal{background:#fff;border-radius:6px;padding:32px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto}
@@ -127,6 +145,7 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
 .btnp{flex:1;background:var(--br);color:#fff;border:none;padding:12px;border-radius:4px;font-family:var(--sa);font-weight:700;font-size:14px;cursor:pointer;text-transform:uppercase;transition:background .15s}
 .btnp:hover{background:var(--pkd)}
 .btns{background:none;border:1.5px solid var(--bd);color:var(--mu);padding:12px 18px;border-radius:4px;font-family:var(--sa);font-weight:700;font-size:13px;cursor:pointer}
+.btnred{background:#dc2626;color:#fff;border:none;padding:12px 18px;border-radius:4px;font-family:var(--sa);font-weight:700;font-size:13px;cursor:pointer}
 .summ{background:var(--cr);border:1px solid var(--bd);border-radius:4px;padding:16px;margin-bottom:20px}
 .summ h4{font-family:var(--se);font-size:1rem;color:var(--br);margin-bottom:10px}
 .sr{display:flex;justify-content:space-between;font-size:14px;padding:4px 0;color:var(--mu)}
@@ -136,89 +155,77 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
 .pb:hover{opacity:.9}
 .pbpp{background:#0070ba;color:#fff}.pbvm{background:#008cff;color:#fff}
 .pbca{background:#00d64f;color:#1a1a1a}.pbip{background:var(--cr);color:var(--br)}
-
-/* ORDER CONFIRM BOX */
 .confirm-detail{background:var(--pkl);border:1px solid var(--pk);border-radius:6px;padding:14px 16px;margin-bottom:16px;font-size:14px;line-height:1.8}
 .confirm-detail strong{color:var(--br)}
-
 .succ{text-align:center;padding:10px 0}
 .succ .ck{font-size:3.5rem;margin-bottom:14px}
 .succ h3{font-family:var(--se);font-size:1.5rem;color:#16a34a;margin-bottom:10px}
 .succ p{font-size:14px;color:var(--mu);line-height:1.6;margin-bottom:6px}
-
-/* CLOSED OVERLAY on buy */
-.closed-notice{background:#fff5f5;border:1.5px solid #fecaca;border-radius:6px;padding:18px;text-align:center;margin-bottom:16px}
-.closed-notice p:first-child{font-size:1.5rem;margin-bottom:8px}
-.closed-notice p:last-child{font-size:14px;color:#991b1b;line-height:1.6}
-
 .srchsec{display:none;padding:32px 24px 0;max-width:1100px;margin:0 auto}
-.warnbox{background:#fef9c3;border:1px solid #fde68a;border-radius:4px;padding:12px 16px;font-size:13px;color:#92400e;line-height:1.5;margin-bottom:16px}
-
+.infobox{background:#e8f4fd;border:1px solid #93c5fd;border-radius:6px;padding:14px 16px;font-size:13px;color:#1e40af;margin-bottom:20px;max-width:700px;line-height:1.6}
 @media(max-width:640px){.hdr{justify-content:center}.hero h1{font-size:2rem}.aboutg,.agrid{grid-template-columns:1fr}.full{grid-column:1}.modal{padding:22px 18px}.srchbar input{width:160px}.notice-row{flex-direction:column}}
 </style>
 </head>
 <body>
 <div class="topbar">✨ Handmade with love · Pickup orders · Made by Ahana ✨</div>
-
-<!-- ANNOUNCEMENT BANNER -->
 <div class="announce" id="announceBanner"></div>
 
-<!-- ADMIN BAR -->
 <div class="abar" id="aBar">
   <span>👩‍🍳 Owner Mode — Hi Ahana!</span>
   <div><a onclick="toggleAP()">Manage Shop</a><a onclick="doLogout()">Log Out</a></div>
 </div>
 
-<!-- ADMIN PANEL -->
 <div class="apanel" id="aPanel">
   <div style="max-width:700px">
 
-    <!-- PAYMENT SETUP -->
+    <!-- PayPal -->
     <div class="ppbox">
-      <p><strong>💳 Your PayPal.me username</strong> — customers pay this account. Ask a parent to set this up at <strong>paypal.com</strong> first!</p>
+      <p><strong>💳 Your PayPal.me username</strong> — customers pay this account.</p>
       <input type="text" id="ppUser" placeholder="Your PayPal.me username (e.g. AhanaShop)" oninput="savePP()"/>
     </div>
 
-    <!-- ANNOUNCEMENTS -->
+    <!-- Announcements -->
     <div class="noticebox">
       <p style="font-family:var(--se);font-size:1.2rem;color:var(--br);margin-bottom:8px">📢 Post an Announcement</p>
-      <p>Use this to tell customers you're out of town, closed for a holiday, or anything else! They'll see it at the top of the website.</p>
+      <p>Tell customers you're out of town, closed, or anything else!</p>
       <div class="notice-row">
-        <input type="text" id="noticeMsg" placeholder="e.g. Out of town this weekend — back Monday!" />
-        <select id="noticeType">
-          <option value="warn">⚠️ Warning (yellow)</option>
-          <option value="info">ℹ️ Info (blue)</option>
-          <option value="closed">🚫 Closed (red)</option>
-        </select>
-        <input type="date" id="noticeExpiry" title="Show until this date (optional)" />
+        <input type="text" id="noticeMsg" placeholder="e.g. Out of town this weekend — back Monday!"/>
+        <select id="noticeType"><option value="warn">⚠️ Warning</option><option value="info">ℹ️ Info</option><option value="closed">🚫 Closed</option></select>
+        <input type="date" id="noticeExpiry"/>
         <button class="btnadd" style="margin-top:0" onclick="postNotice()">Post</button>
       </div>
       <div id="activeNotices"></div>
     </div>
 
-    <!-- ADD ITEM -->
+    <!-- Videos -->
+    <p class="atitle">🎬 Manage Videos</p>
+    <div class="vidbox">
+      <p>To add a YouTube video: go to the video, click <strong>Share</strong>, copy the link, and paste the ID (the part after <strong>v=</strong>) below.</p>
+      <div id="vidAdminList"></div>
+      <button class="btnadd" onclick="addVideoSlot()">+ Add Another Video</button>
+    </div>
+
+    <!-- Add Item -->
     <p class="atitle">Add a New Item</p>
+    <div class="infobox">💡 Items added here show on <strong>your device only</strong>. To add items everyone sees, ask Claude to update your GitHub file!</div>
     <div class="agrid">
       <div><label class="lbl">Item Name</label><input type="text" id="aN" placeholder="e.g. Chocolate Chip Cookies"/></div>
       <div><label class="lbl">Price</label><input type="text" id="aP" placeholder="$4.00"/></div>
-      <div><label class="lbl">Category</label><select id="aC"><option>Baked Goods</option><option>Friendship Bracelets</option><option>Toys & Fun Things</option></select></div>
-      <div><label class="lbl">Photo URL (optional)</label><input type="text" id="aPh" placeholder="https://..."/></div>
+      <div><label class="lbl">Category</label><select id="aC"><option>Baked Goods</option><option>Friendship Bracelets</option><option>Toys &amp; Fun Things</option></select></div>
+      <div><label class="lbl">Photo URL (optional)</label><input type="text" id="aPh" placeholder="Paste an image link here"/></div>
       <div class="full"><label class="lbl">Description</label><textarea id="aD" placeholder="What makes this item special?"></textarea></div>
     </div>
     <button class="btnadd" onclick="addItem()">+ Add to Shop</button>
 
-    <!-- ORDERS -->
-    <div style="margin-top:36px">
-      <p class="atitle">Customer Orders</p>
-      <div id="ordersBox"></div>
-    </div>
+    <!-- Orders -->
+    <p class="atitle">Customer Orders</p>
+    <div id="ordersBox"></div>
   </div>
 </div>
 
-<!-- HEADER -->
 <header>
   <div class="hdr">
-    <a href="#" class="logo">Cookies <span>&</span> Co.</a>
+    <a href="#" class="logo">Cookies <span>&amp;</span> Co.</a>
     <div class="srchbar">
       <input type="text" id="si" placeholder="Search items..." onkeydown="if(event.key==='Enter')doSearch()"/>
       <button onclick="doSearch()">🔍</button>
@@ -231,15 +238,18 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
     <a class="act" onclick="doFilter('all',this)">All Items</a>
     <a onclick="doFilter('Baked Goods',this)">Baked Goods</a>
     <a onclick="doFilter('Friendship Bracelets',this)">Bracelets</a>
-    <a onclick="doFilter('Toys & Fun Things',this)">Toys</a>
-    <a href="#vids">Videos</a>
+    <a onclick="doFilter('Toys &amp; Fun Things',this)">Toys</a>
+    <div class="nav-dd">
+      <a href="#vids">Videos</a>
+      <div class="dd-menu" id="vidDropMenu"></div>
+    </div>
     <a href="#about">Ahana's Shop</a>
     <a class="navr" onclick="showLogin()">🔒 Owner Login</a>
   </div>
 </nav>
 
 <div class="hero">
-  <h1>Homemade Goodies, Crafts & More</h1>
+  <h1>Homemade Goodies, Crafts &amp; More</h1>
   <div id="statusPill" class="hours-pill"></div>
   <p>Welcome to Ahana's shop! Everything is made by hand with care. Order online, pay securely, and pick up in your neighborhood.</p>
   <button class="herobtn" onclick="doFilter('all',null)">Shop Now</button>
@@ -247,43 +257,32 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
 
 <main>
   <div class="srchsec" id="srchSec">
-    <div class="sechdr">
-      <h2 id="srchTitle">Results</h2>
-      <a onclick="clearSearch()" style="font-size:13px;font-weight:700;color:var(--pkd);cursor:pointer">✕ Clear</a>
-    </div>
+    <div class="sechdr"><h2 id="srchTitle">Results</h2><a onclick="clearSearch()" style="font-size:13px;font-weight:700;color:var(--pkd);cursor:pointer">✕ Clear</a></div>
     <div class="pgrid" id="srchGrid"></div>
   </div>
-
   <div class="sec">
     <div class="sechdr"><h2 id="secTitle">All Items</h2></div>
     <div class="pgrid" id="pgrid"></div>
-    <p id="emptyMsg" style="display:none;color:#bbb;padding:20px 0;font-size:15px">No items yet — check back soon!</p>
+    <p id="emptyMsg" style="display:none;color:#bbb;padding:20px 0;font-size:15px">No items yet!</p>
   </div>
-
   <div class="vidsec" id="vids">
     <div class="sec">
       <div class="sechdr"><h2>Videos</h2></div>
-      <div class="vgrid">
-        <div class="vc"><div class="vt"><div class="play"></div></div><div class="vb"><p>How I Make My Friendship Bracelets</p><p>Coming soon · Ahana's Shop</p></div></div>
-        <div class="vc"><div class="vt"><div class="play"></div></div><div class="vb"><p>Baking Chocolate Chip Cookies With Me!</p><p>Coming soon · Ahana's Shop</p></div></div>
-        <div class="vc"><div class="vt"><div class="play"></div></div><div class="vb"><p>My Toy Collection — What I'm Selling This Week</p><p>Coming soon · Ahana's Shop</p></div></div>
-      </div>
+      <div class="vgrid" id="vgrid"></div>
     </div>
   </div>
-
   <div class="sec" id="about">
     <div class="sechdr"><h2>Ahana's Shop</h2></div>
     <div class="aboutg">
       <div>
-        <p style="font-family:var(--se);font-size:1.15rem;color:var(--br);line-height:1.8;margin-bottom:14px">Hi! I'm Ahana — the owner of Cookies & Co. 👑</p>
-        <p style="font-size:14px;color:var(--mu);line-height:1.75">I love baking, making friendship bracelets, and finding cool things to share. Everything is made by me or picked with care.</p>
-        <p style="font-size:14px;color:var(--mu);line-height:1.75;margin-top:12px">I'm lucky to have an amazing team helping me run the shop! A big thank you to my assistants: <strong style="color:var(--br)">Akira, Shreya, Natalie, and Hannah</strong> 💕</p>
+        <p style="font-family:var(--se);font-size:1.15rem;color:var(--br);line-height:1.8;margin-bottom:14px">Hi! I'm Ahana — the owner of Cookies &amp; Co. 👑</p>
+        <p style="font-size:14px;color:var(--mu);line-height:1.75">I love baking, making friendship bracelets, and finding cool things to share.</p>
+        <p style="font-size:14px;color:var(--mu);line-height:1.75;margin-top:12px">A big thank you to my assistants: <strong style="color:var(--br)">Akira, Shreya, Natalie, and Hannah</strong> 💕</p>
         <p style="font-size:14px;color:var(--mu);line-height:1.75;margin-top:12px">All orders are <strong>pickup only</strong> — I'll message you to arrange a time!</p>
         <div style="margin-top:18px;background:var(--pkl);border:1px solid var(--bd);border-radius:6px;padding:14px 16px;font-size:13px;color:var(--mu);line-height:1.8">
           <strong style="color:var(--br)">📅 Availability:</strong><br>
           Mon–Fri: Busy with school — orders welcome, pickup on weekends<br>
-          Sat–Sun: Open for pickups!<br>
-          <span id="holidayNote"></span>
+          Sat–Sun: Open for pickups!<br><span id="holidayNote"></span>
         </div>
       </div>
       <div class="aboutimg">🍪</div>
@@ -293,7 +292,7 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
 
 <footer>
   <div class="ft">
-    <div class="ftlogo">Cookies & Co.</div>
+    <div class="ftlogo">Cookies &amp; Co.</div>
     <div class="ftlinks"><a href="#">All Items</a><a href="#vids">Videos</a><a href="#about">About</a></div>
     <div class="ftcopy">© 2025 Ahana's Shop · Pickup orders only · Made with 💕</div>
   </div>
@@ -307,8 +306,8 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
       <h3>Place Your Order</h3><span class="ilbl" id="s1lbl"></span>
       <div id="shopStatusNote"></div>
       <div class="fg"><label>Your Name *</label><input type="text" id="oN" placeholder="e.g. Sarah M."/></div>
-      <div class="fg"><label>Phone or Email * (so Ahana can reach you)</label><input type="text" id="oC" placeholder="e.g. mom@email.com or 555-1234"/></div>
-      <div class="fg"><label>Preferred Pickup Date & Time</label><input type="text" id="oPU" placeholder="e.g. Saturday May 10 after 2pm"/></div>
+      <div class="fg"><label>Phone or Email *</label><input type="text" id="oC" placeholder="e.g. mom@email.com or 555-1234"/></div>
+      <div class="fg"><label>Preferred Pickup Date &amp; Time</label><input type="text" id="oPU" placeholder="e.g. Saturday May 10 after 2pm"/></div>
       <div class="fg"><label>Special Requests</label><textarea id="oR" placeholder="Bracelet colors, allergies, anything else..."></textarea></div>
       <div class="macts"><button class="btns" onclick="closeC()">Cancel</button><button class="btnp" onclick="toS2()">Continue →</button></div>
     </div>
@@ -321,13 +320,12 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
     <div id="s3" style="display:none">
       <div class="steps"><div class="stp done">1. Your Info</div><div class="stp done">2. Review</div><div class="stp act">3. Pay</div></div>
       <h3>How would you like to pay?</h3>
-      <p style="font-size:13px;color:var(--mu);margin:6px 0 18px">Tap a payment button — your order is saved right away!</p>
+      <p style="font-size:13px;color:var(--mu);margin:6px 0 18px">Tap a button to pay!</p>
       <div class="payopts" id="payOpts"></div>
       <button class="btns" style="width:100%;margin-top:14px" onclick="showS(2)">← Back</button>
     </div>
     <div id="s4" style="display:none" class="succ">
-      <div class="ck">🎉</div>
-      <h3>Order Placed!</h3>
+      <div class="ck">🎉</div><h3>Order Placed!</h3>
       <div class="confirm-detail" id="confirmDetail"></div>
       <p>Ahana will reach out to confirm your pickup. Can't wait! 💕</p>
       <button class="btnp" onclick="closeC()" style="margin-top:20px">Close</button>
@@ -340,172 +338,222 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
   <div class="modal" style="max-width:340px">
     <h3 style="margin-bottom:6px">Owner Login</h3>
     <p style="font-size:13px;color:var(--mu);margin-bottom:18px">Only Ahana can access this!</p>
-    <div class="warnbox">Default password: <strong>friends4ever</strong> — change it to something secret in the code!</div>
     <div class="fg"><label>Password</label><input type="password" id="lpw" placeholder="Enter your password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
     <div class="macts"><button class="btns" onclick="closeL()">Cancel</button><button class="btnp" onclick="doLogin()">Log In</button></div>
   </div>
 </div>
 
+<!-- EDIT ITEM MODAL -->
+<div class="overlay" id="editModal">
+  <div class="modal" style="max-width:420px">
+    <h3 style="margin-bottom:18px">✏️ Edit Item</h3>
+    <input type="hidden" id="editId"/>
+    <div class="fg"><label>Item Name</label><input type="text" id="editName"/></div>
+    <div class="fg"><label>Price (e.g. $7.99)</label><input type="text" id="editPrice"/></div>
+    <div class="fg"><label>Description</label><textarea id="editDesc"></textarea></div>
+    <div class="fg"><label>Photo URL</label><input type="text" id="editPh" placeholder="Paste an image link here"/></div>
+    <div class="macts">
+      <button class="btns" onclick="closeEdit()">Cancel</button>
+      <button class="btnp" onclick="saveEdit()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const PW='friends4ever'; // ← change this!
+// ════════════════════════════
+// 🔒 PASSWORD
+// ════════════════════════════
+const PW = 'friends4ever';
 
-// ── US HOLIDAYS (month is 0-indexed) ──────────────────────
-function getHolidays(year){
-  // Fixed-date holidays
-  const fixed=[
-    {m:0,d:1,name:"New Year's Day"},
-    {m:0,d:15,name:"MLK Day (approx)"},
-    {m:1,d:14,name:"Valentine's Day"},
-    {m:6,d:4,name:"Independence Day"},
-    {m:9,d:31,name:"Halloween"},
-    {m:10,d:11,name:"Veterans Day"},
-    {m:11,d:24,name:"Christmas Eve"},
-    {m:11,d:25,name:"Christmas Day"},
-    {m:11,d:31,name:"New Year's Eve"},
-  ];
-  // Thanksgiving = 4th Thursday of November
-  let nov=new Date(year,10,1);
-  let thu=0,tgCount=0;
-  for(let d=1;d<=30;d++){const day=new Date(year,10,d);if(day.getDay()===4){tgCount++;if(tgCount===4){thu=d;break;}}}
-  fixed.push({m:10,d:thu,name:"Thanksgiving"});
-  fixed.push({m:10,d:thu+1,name:"Day After Thanksgiving"});
-  // Labor Day = 1st Monday of September
-  let sep=1;
-  for(let d=1;d<=7;d++){if(new Date(year,8,d).getDay()===1){sep=d;break;}}
-  fixed.push({m:8,d:sep,name:"Labor Day"});
-  // Memorial Day = last Monday of May
-  let mem=1;
-  for(let d=31;d>=25;d--){if(new Date(year,4,d).getDay()===1){mem=d;break;}}
-  fixed.push({m:4,d:mem,name:"Memorial Day"});
-  return fixed;
-}
+// ════════════════════════════
+// 🛍️ SHOP ITEMS
+// Add new items here so EVERYONE can see them!
+// ════════════════════════════
+const SHOP_ITEMS = [
+  {id:1, name:'Cookie Box', price:'$7.99', amt:7.99, cat:'Baked Goods',
+   desc:'6 freshly baked cookies — pick your favorite flavor!',
+   ph:'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600&auto=format&fit=crop'},
+  {id:2, name:'Brownie Bites', price:'$4.99', amt:4.99, cat:'Baked Goods',
+   desc:'4 chewy, fudgy brownies baked fresh.',
+   ph:'https://images.unsplash.com/photo-1515037893149-de7f840978e2?w=600&auto=format&fit=crop'},
+  {id:3, name:'Frosted Cupcakes', price:'$4.99', amt:4.99, cat:'Baked Goods',
+   desc:'2 beautifully decorated cupcakes.',
+   ph:'https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=600&auto=format&fit=crop'},
+  {id:4, name:'Red Velvet w/ Chocolate Chips', price:'$10.99', amt:10.99, cat:'Baked Goods',
+   desc:'8 freshly baked cookies, fresh from the oven!',
+   ph:'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&auto=format&fit=crop'},
+  {id:5, name:'Chocolate Cookies w/ Caramel', price:'$11.99', amt:11.99, cat:'Baked Goods',
+   desc:'10 chocolate cookies with caramel, warm and packed up!',
+   ph:'https://images.unsplash.com/photo-1548365328-8c6db3220e4e?w=600&auto=format&fit=crop'},
+  {id:6, name:'Friendship Bracelet', price:'$2.00', amt:2.00, cat:'Friendship Bracelets',
+   desc:'Handmade just for you — tell me your colors!',
+   ph:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&auto=format&fit=crop'},
+  {id:7, name:'Bracelet Bundle (x3)', price:'$5.99', amt:5.99, cat:'Friendship Bracelets',
+   desc:'3 handmade bracelets — perfect gift!',
+   ph:'https://images.unsplash.com/photo-1573408301185-9519f94bf4c4?w=600&auto=format&fit=crop'},
+  {id:8, name:'Mystery Toy', price:'$3.00', amt:3.00, cat:'Toys & Fun Things',
+   desc:'A fun surprise item — everyone loves them!',
+   ph:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop'},
+];
 
-function todayHoliday(){
-  const now=new Date();
-  const holidays=getHolidays(now.getFullYear());
-  return holidays.find(h=>h.m===now.getMonth()&&h.d===now.getDate())||null;
-}
+// ════════════════════════════
+// 🎬 VIDEOS (base list)
+// ════════════════════════════
+const BASE_VIDEOS = [
+  {title:'How I Make My Friendship Bracelets', youtubeId:''},
+  {title:'Baking Chocolate Chip Cookies With Me!', youtubeId:''},
+  {title:'My Toy Collection — What I\'m Selling This Week', youtubeId:''},
+];
 
-function upcomingHoliday(){
-  const now=new Date();
-  const holidays=getHolidays(now.getFullYear());
-  const soon=holidays.find(h=>{
-    const hd=new Date(now.getFullYear(),h.m,h.d);
-    const diff=(hd-now)/(1000*60*60*24);
-    return diff>0&&diff<=7;
-  });
-  return soon||null;
-}
-
-// ── STATUS LOGIC ──────────────────────────────────────────
-function getShopStatus(){
-  const now=new Date();
-  const dow=now.getDay(); // 0=Sun,6=Sat
-  const h=now.getHours();
-  const holiday=todayHoliday();
-  const notices=JSON.parse(localStorage.getItem('cc_notices')||'[]');
-  const today=now.toISOString().slice(0,10);
-  const closedNotice=notices.find(n=>n.type==='closed'&&(!n.expiry||n.expiry>=today));
-  if(closedNotice) return {status:'closed',msg:'🚫 Closed: '+closedNotice.msg};
-  if(holiday) return {status:'closed',msg:'🎉 Closed today for '+holiday.name+'! Orders still welcome for later pickup.'};
-  if(dow===0||dow===6) return {status:'open',msg:'✅ Open this weekend for pickups!'};
-  return {status:'busy',msg:'📚 Busy with school on weekdays — orders welcome, pickup on weekends!'};
-}
-
-function fmtDateTime(){
-  return new Date().toLocaleString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});
-}
-
-// ── NOTICES ───────────────────────────────────────────────
-let notices=JSON.parse(localStorage.getItem('cc_notices')||'[]');
+// ── State ────────────────────────────────────
+const EM = {'Baked Goods':'🍪','Friendship Bracelets':'📿','Toys & Fun Things':'🎁'};
+let overrides  = JSON.parse(localStorage.getItem('cc_overrides')||'{}');
+let extraItems = JSON.parse(localStorage.getItem('cc_extra')||'[]');
+let deletedIds = JSON.parse(localStorage.getItem('cc_deleted')||'[]');
+let videos     = JSON.parse(localStorage.getItem('cc_videos')||JSON.stringify(BASE_VIDEOS));
+let orders     = JSON.parse(localStorage.getItem('cc_orders')||'[]');
+let notices    = JSON.parse(localStorage.getItem('cc_notices')||'[]');
+let items      = SHOP_ITEMS
+  .filter(i=>!deletedIds.includes(i.id))
+  .map(i=>overrides[i.id]?{...i,...overrides[i.id]}:i)
+  .concat(extraItems);
+let cur=null, cf='all', ownerOn=false, openDotsId=null;
 
 function savePP(){localStorage.setItem('cc_pp',document.getElementById('ppUser').value.trim());}
+function saveVideos(){localStorage.setItem('cc_videos',JSON.stringify(videos));}
 
+// ── Videos ──────────────────────────────────
+function renderVideos(){
+  // Nav dropdown
+  document.getElementById('vidDropMenu').innerHTML = videos.map((v,i)=>{
+    const hasVid = v.youtubeId && v.youtubeId.trim();
+    return `<a href="#vid${i}" class="${hasVid?'':'dd-coming'}">${hasVid?'▶️':'⏳'} ${v.title||'Video '+(i+1)}</a>`;
+  }).join('');
+  // Video grid
+  document.getElementById('vgrid').innerHTML = videos.map((v,i)=>{
+    const hasVid = v.youtubeId && v.youtubeId.trim();
+    const embed = hasVid
+      ? `<iframe src="https://www.youtube.com/embed/${v.youtubeId.trim()}" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>`
+      : `<div class="vt-thumb"><div class="play"></div><span class="vtlabel">Coming soon</span></div>`;
+    return `<div class="vc" id="vid${i}"><div class="vt">${embed}</div><div class="vb"><p>${v.title||'Video '+(i+1)}</p><p>${hasVid?'':'Coming soon · '}Ahana's Shop</p></div></div>`;
+  }).join('');
+  // Admin video list
+  renderVideoAdmin();
+}
+
+function renderVideoAdmin(){
+  document.getElementById('vidAdminList').innerHTML = videos.map((v,i)=>`
+    <div class="vid-row">
+      <span class="vnum">${i+1}.</span>
+      <input type="text" value="${v.title||''}" placeholder="Video title" oninput="videos[${i}].title=this.value;saveVideos();renderVideos()"/>
+      <input type="text" value="${v.youtubeId||''}" placeholder="YouTube ID (e.g. dQw4w9WgXcQ)" style="max-width:200px" oninput="videos[${i}].youtubeId=this.value;saveVideos();renderVideos()"/>
+      <button class="del" onclick="removeVideo(${i})" title="Remove video" style="font-size:18px">✕</button>
+    </div>`
+  ).join('');
+}
+
+function addVideoSlot(){
+  videos.push({title:'',youtubeId:''});
+  saveVideos();renderVideos();
+}
+function removeVideo(i){
+  if(!confirm('Remove this video slot?'))return;
+  videos.splice(i,1);saveVideos();renderVideos();
+}
+
+// ── Holidays ─────────────────────────────────
+function getHolidays(y){
+  const f=[{m:0,d:1,name:"New Year's Day"},{m:6,d:4,name:"Independence Day"},{m:9,d:31,name:"Halloween"},{m:11,d:25,name:"Christmas Day"}];
+  let tc=0,thu=0;for(let d=1;d<=30;d++){if(new Date(y,10,d).getDay()===4){tc++;if(tc===4){thu=d;break;}}}
+  f.push({m:10,d:thu,name:"Thanksgiving"});
+  let sep=1;for(let d=1;d<=7;d++){if(new Date(y,8,d).getDay()===1){sep=d;break;}}f.push({m:8,d:sep,name:"Labor Day"});
+  let mem=1;for(let d=31;d>=25;d--){if(new Date(y,4,d).getDay()===1){mem=d;break;}}f.push({m:4,d:mem,name:"Memorial Day"});
+  return f;
+}
+function todayHoliday(){const n=new Date(),h=getHolidays(n.getFullYear());return h.find(x=>x.m===n.getMonth()&&x.d===n.getDate())||null;}
+function upcomingHoliday(){const n=new Date(),h=getHolidays(n.getFullYear());return h.find(x=>{const d=new Date(n.getFullYear(),x.m,x.d),diff=(d-n)/864e5;return diff>0&&diff<=7;})||null;}
+function getShopStatus(){
+  const n=new Date(),dow=n.getDay(),hol=todayHoliday(),today=n.toISOString().slice(0,10);
+  const cn=notices.find(x=>x.type==='closed'&&(!x.expiry||x.expiry>=today));
+  if(cn)return{status:'closed',msg:'🚫 Closed: '+cn.msg};
+  if(hol)return{status:'closed',msg:'🎉 Closed for '+hol.name+'! Orders still welcome.'};
+  if(dow===0||dow===6)return{status:'open',msg:'✅ Open this weekend for pickups!'};
+  return{status:'busy',msg:'📚 Busy with school — orders welcome, pickup on weekends!'};
+}
+function fmtDateTime(){return new Date().toLocaleString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true});}
+
+// ── Notices ──────────────────────────────────
 function postNotice(){
-  const msg=document.getElementById('noticeMsg').value.trim();
-  if(!msg){alert('Please type a message first!');return;}
-  const type=document.getElementById('noticeType').value;
-  const expiry=document.getElementById('noticeExpiry').value;
+  const msg=document.getElementById('noticeMsg').value.trim();if(!msg){alert('Please type a message!');return;}
+  const type=document.getElementById('noticeType').value,expiry=document.getElementById('noticeExpiry').value;
   notices.unshift({id:Date.now(),msg,type,expiry:expiry||null,posted:new Date().toLocaleDateString()});
   localStorage.setItem('cc_notices',JSON.stringify(notices));
-  document.getElementById('noticeMsg').value='';
-  document.getElementById('noticeExpiry').value='';
+  document.getElementById('noticeMsg').value='';document.getElementById('noticeExpiry').value='';
   renderNotices();updateBanner();updateStatusPill();
 }
-
-function removeNotice(id){
-  notices=notices.filter(n=>n.id!==id);
-  localStorage.setItem('cc_notices',JSON.stringify(notices));
-  renderNotices();updateBanner();updateStatusPill();
-}
-
+function removeNotice(id){notices=notices.filter(n=>n.id!==id);localStorage.setItem('cc_notices',JSON.stringify(notices));renderNotices();updateBanner();updateStatusPill();}
 function renderNotices(){
-  const el=document.getElementById('activeNotices');
+  const el=document.getElementById('activeNotices'),today=new Date().toISOString().slice(0,10);
   if(!notices.length){el.innerHTML='<p style="font-size:13px;color:#bbb;margin-top:10px">No active announcements.</p>';return;}
-  const today=new Date().toISOString().slice(0,10);
-  el.innerHTML=notices.map(n=>{
-    const expired=n.expiry&&n.expiry<today;
-    return`<div class="active-notice" style="${expired?'opacity:.5':''}">
-      <span>${expired?'[Expired] ':''}${n.type==='closed'?'🚫':n.type==='warn'?'⚠️':'ℹ️'} ${n.msg}${n.expiry?' (until '+n.expiry+')':''} <span style="font-size:12px;color:var(--mu)">— posted ${n.posted}</span></span>
-      <button class="btnout" onclick="removeNotice(${n.id})">Remove</button>
-    </div>`;
+  el.innerHTML=notices.map(n=>{const exp=n.expiry&&n.expiry<today;
+    return`<div class="active-notice" style="${exp?'opacity:.5':''}"><span>${exp?'[Expired] ':''}${n.type==='closed'?'🚫':n.type==='warn'?'⚠️':'ℹ️'} ${n.msg}${n.expiry?' (until '+n.expiry+')':''} <span style="font-size:12px;color:var(--mu)">— ${n.posted}</span></span><button class="btnout" onclick="removeNotice(${n.id})">Remove</button></div>`;
   }).join('');
 }
-
 function updateBanner(){
-  const banner=document.getElementById('announceBanner');
-  const today=new Date().toISOString().slice(0,10);
+  const banner=document.getElementById('announceBanner'),today=new Date().toISOString().slice(0,10);
   const active=notices.find(n=>!n.expiry||n.expiry>=today);
   if(active){banner.textContent=active.msg;banner.className='announce '+active.type;}
-  else{
-    const st=getShopStatus();
-    if(st.status==='closed'){banner.textContent=st.msg;banner.className='announce closed';}
-    else if(st.status==='busy'){banner.textContent=st.msg;banner.className='announce warn';}
-    else{banner.className='announce';banner.textContent='';}
-  }
+  else{const st=getShopStatus();if(st.status==='closed'){banner.textContent=st.msg;banner.className='announce closed';}else if(st.status==='busy'){banner.textContent=st.msg;banner.className='announce warn';}else{banner.className='announce';banner.textContent='';}}
 }
-
 function updateStatusPill(){
-  const st=getShopStatus();
-  const pill=document.getElementById('statusPill');
-  const dotClass=st.status==='open'?'dot-open':st.status==='busy'?'dot-busy':'dot-closed';
-  const label=st.status==='open'?'Open for pickups this weekend':st.status==='busy'?'Busy weekdays — pickup weekends':'Closed today';
-  pill.innerHTML=`<span class="dot ${dotClass}"></span>${label}`;
-  // upcoming holiday note
-  const hn=document.getElementById('holidayNote');
-  const upcoming=upcomingHoliday();
-  if(hn) hn.textContent=upcoming?`Closed on ${upcoming.name}!`:'';
+  const st=getShopStatus(),pill=document.getElementById('statusPill');
+  const dc=st.status==='open'?'dot-open':st.status==='busy'?'dot-busy':'dot-closed';
+  const lbl=st.status==='open'?'Open for pickups this weekend':st.status==='busy'?'Busy weekdays — pickup weekends':'Closed today';
+  pill.innerHTML=`<span class="dot ${dc}"></span>${lbl}`;
+  const hn=document.getElementById('holidayNote'),up=upcomingHoliday();
+  if(hn)hn.textContent=up?`Closed on ${up.name}!`:'';
 }
 
-// ── ITEMS & ORDERS ────────────────────────────────────────
-let items=JSON.parse(localStorage.getItem('cc_items')||'null');
-let orders=JSON.parse(localStorage.getItem('cc_orders')||'[]');
-let ppUser=localStorage.getItem('cc_pp')||'';
-let cur=null,cf='all';
-const EM={'Baked Goods':'🍪','Friendship Bracelets':'📿','Toys & Fun Things':'🎁'};
-if(!items){
-  items=[
-    {id:1,name:'Cookie Box',price:'$4.00',amt:4,cat:'Baked Goods',desc:'6 freshly baked cookies — pick your favorite flavor!',ph:'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600&auto=format&fit=crop'},
-    {id:2,name:'Brownie Bites',price:'$3.00',amt:3,cat:'Baked Goods',desc:'4 chewy, fudgy brownies baked fresh.',ph:'https://images.unsplash.com/photo-1515037893149-de7f840978e2?w=600&auto=format&fit=crop'},
-    {id:3,name:'Frosted Cupcakes',price:'$5.00',amt:5,cat:'Baked Goods',desc:'2 beautifully decorated cupcakes.',ph:'https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=600&auto=format&fit=crop'},
-    {id:4,name:'Friendship Bracelet',price:'$2.00',amt:2,cat:'Friendship Bracelets',desc:'Handmade just for you — tell me your colors!',ph:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&auto=format&fit=crop'},
-    {id:5,name:'Bracelet Bundle (x3)',price:'$5.00',amt:5,cat:'Friendship Bracelets',desc:'3 handmade bracelets — perfect gift!',ph:'https://images.unsplash.com/photo-1573408301185-9519f94bf4c4?w=600&auto=format&fit=crop'},
-    {id:6,name:'Mystery Toy',price:'$3.00',amt:3,cat:'Toys & Fun Things',desc:'A fun surprise item — everyone loves them!',ph:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop'},
-  ];save();
+// ── Cards & Dots ─────────────────────────────
+function card(i){
+  const img = i.ph ? `<img src="${i.ph}" alt="${i.name}" loading="lazy" onerror="this.style.display='none'"/>` : '';
+  const fallback = !i.ph ? (EM[i.cat]||'🛍️') : '';
+  return `<div class="card" id="card-${i.id}">
+    <div class="card-dots-wrap">
+      <button class="card-dots-btn" onclick="toggleDots(event,${i.id})">⋮</button>
+      <div class="card-dots-menu" id="cdm-${i.id}">
+        <button onclick="openEdit(${i.id})">✏️ Edit</button>
+        <button onclick="deleteItem(${i.id})">🗑️ Delete</button>
+      </div>
+    </div>
+    <div class="cimg">${img}${fallback}</div>
+    <div class="cbody">
+      <p class="cattag">${i.cat}</p>
+      <p class="iname">${i.name}</p>
+      <p class="idesc">${i.desc}</p>
+      <div class="cfoot"><span class="price">${i.price}</span><button class="buybtn" onclick="openC(${i.id})">Buy Now</button></div>
+    </div>
+  </div>`;
 }
-function save(){localStorage.setItem('cc_items',JSON.stringify(items));localStorage.setItem('cc_orders',JSON.stringify(orders));}
 
-function card(i){return`<div class="card"><div class="cimg">${i.ph?`<img src="${i.ph}" alt="${i.name}" onerror="this.style.display='none'"/>`:EM[i.cat]||'🛍️'}</div><div class="cbody"><p class="cattag">${i.cat}</p><p class="iname">${i.name}</p><p class="idesc">${i.desc}</p><div class="cfoot"><span class="price">${i.price}</span><button class="buybtn" onclick="openC(${i.id})">Buy Now</button></div></div></div>`;}
+function toggleDots(e,id){
+  e.stopPropagation();
+  const menu=document.getElementById('cdm-'+id);
+  const isOpen=menu.classList.contains('open');
+  closeAllDots();
+  if(!isOpen){menu.classList.add('open');openDotsId=id;}
+}
+function closeAllDots(){document.querySelectorAll('.card-dots-menu.open').forEach(m=>m.classList.remove('open'));openDotsId=null;}
+document.addEventListener('click',closeAllDots);
 
 function doFilter(c,el){
-  if(el){document.querySelectorAll('nav a').forEach(a=>a.classList.remove('act'));el.classList.add('act');}
+  if(el){document.querySelectorAll('.navi>a').forEach(a=>a.classList.remove('act'));el.classList.add('act');}
   cf=c;clearSearch();
   const fl=c==='all'?items:items.filter(i=>i.cat===c);
   document.getElementById('secTitle').textContent=c==='all'?'All Items':c;
   document.getElementById('pgrid').innerHTML=fl.map(card).join('');
   document.getElementById('emptyMsg').style.display=fl.length?'none':'block';
 }
-
 function doSearch(){
   const q=document.getElementById('si').value.trim().toLowerCase();if(!q)return;
   const r=items.filter(i=>i.name.toLowerCase().includes(q)||i.cat.toLowerCase().includes(q)||i.desc.toLowerCase().includes(q));
@@ -516,119 +564,124 @@ function doSearch(){
 }
 function clearSearch(){document.getElementById('srchSec').style.display='none';document.getElementById('si').value='';}
 
+// ── Edit / Delete ────────────────────────────
+function openEdit(id){
+  const item=items.find(i=>i.id===id);if(!item)return;
+  document.getElementById('editId').value=id;
+  document.getElementById('editName').value=item.name;
+  document.getElementById('editPrice').value=item.price;
+  document.getElementById('editDesc').value=item.desc;
+  document.getElementById('editPh').value=item.ph||'';
+  closeAllDots();
+  document.getElementById('editModal').classList.add('on');
+}
+function closeEdit(){document.getElementById('editModal').classList.remove('on');}
+function saveEdit(){
+  const id=Number(document.getElementById('editId').value);
+  const name=document.getElementById('editName').value.trim();
+  const priceRaw=document.getElementById('editPrice').value.trim();
+  const desc=document.getElementById('editDesc').value.trim();
+  const ph=document.getElementById('editPh').value.trim();
+  if(!name||!priceRaw){alert('Name and price are required!');return;}
+  const amt=parseFloat(priceRaw.replace(/[^0-9.]/g,''))||0;
+  const price='$'+amt.toFixed(2);
+  overrides[id]={name,price,amt,desc,ph};
+  localStorage.setItem('cc_overrides',JSON.stringify(overrides));
+  const idx=items.findIndex(i=>i.id===id);
+  if(idx!==-1)items[idx]={...items[idx],name,price,amt,desc,ph};
+  closeEdit();doFilter(cf,null);
+}
+function deleteItem(id){
+  closeAllDots();
+  if(!confirm('Delete this item? You can always ask Claude to add it back!'))return;
+  deletedIds.push(id);
+  localStorage.setItem('cc_deleted',JSON.stringify(deletedIds));
+  items=items.filter(i=>i.id!==id);
+  doFilter(cf,null);
+}
+
+// ── Checkout ─────────────────────────────────
 function openC(id){
   cur=items.find(i=>i.id===id);
   document.getElementById('s1lbl').textContent=cur.name+' — '+cur.price;
   ['oN','oC','oPU','oR'].forEach(x=>document.getElementById(x).value='');
-  // show shop status note inside modal
-  const st=getShopStatus();
-  const sn=document.getElementById('shopStatusNote');
-  if(st.status==='busy'){
-    sn.innerHTML=`<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:6px;padding:12px 14px;font-size:13px;color:#92400e;margin-bottom:16px">📚 <strong>Heads up:</strong> Ahana is busy with school on weekdays. Your order is welcome — please request a <strong>weekend pickup</strong>!</div>`;
-  } else if(st.status==='closed'){
-    sn.innerHTML=`<div style="background:#fee2e2;border:1px solid #fecaca;border-radius:6px;padding:12px 14px;font-size:13px;color:#991b1b;margin-bottom:16px">🚫 <strong>Closed today</strong> — but you can still place an order for a future pickup!</div>`;
-  } else { sn.innerHTML=''; }
+  const st=getShopStatus(),sn=document.getElementById('shopStatusNote');
+  if(st.status==='busy')sn.innerHTML=`<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:6px;padding:12px 14px;font-size:13px;color:#92400e;margin-bottom:16px">📚 <strong>Heads up:</strong> Ahana is busy on weekdays. Please request a <strong>weekend pickup</strong>!</div>`;
+  else if(st.status==='closed')sn.innerHTML=`<div style="background:#fee2e2;border:1px solid #fecaca;border-radius:6px;padding:12px 14px;font-size:13px;color:#991b1b;margin-bottom:16px">🚫 <strong>Closed today</strong> — you can still order for a future pickup!</div>`;
+  else sn.innerHTML='';
   showS(1);document.getElementById('coModal').classList.add('on');
 }
 function closeC(){document.getElementById('coModal').classList.remove('on');}
 function showS(n){[1,2,3,4].forEach(x=>document.getElementById('s'+x).style.display=x===n?'block':'none');}
-
 function toS2(){
   const n=document.getElementById('oN').value.trim(),c=document.getElementById('oC').value.trim();
   if(!n||!c){alert('Please fill in your name and contact info!');return;}
   const pu=document.getElementById('oPU').value||'To be arranged',r=document.getElementById('oR').value;
-  document.getElementById('revBox').innerHTML=`<h4>Order Summary</h4>
-    <div class="sr"><span>Item</span><span>${cur.name}</span></div>
-    <div class="sr"><span>Name</span><span>${n}</span></div>
-    <div class="sr"><span>Contact</span><span>${c}</span></div>
-    <div class="sr"><span>Pickup</span><span>${pu}</span></div>
-    ${r?`<div class="sr"><span>Requests</span><span>${r}</span></div>`:''}
-    <div class="sr tot"><span>Total</span><span>${cur.price}</span></div>`;
+  document.getElementById('revBox').innerHTML=`<h4>Order Summary</h4><div class="sr"><span>Item</span><span>${cur.name}</span></div><div class="sr"><span>Name</span><span>${n}</span></div><div class="sr"><span>Contact</span><span>${c}</span></div><div class="sr"><span>Pickup</span><span>${pu}</span></div>${r?`<div class="sr"><span>Requests</span><span>${r}</span></div>`:''}<div class="sr tot"><span>Total</span><span>${cur.price}</span></div>`;
   showS(2);
 }
-
 function toS3(){
-  const pu=localStorage.getItem('cc_pp')||'';
-  const amt=cur.amt.toFixed(2);const note=encodeURIComponent('Cookies & Co. — '+cur.name);
+  const pu=localStorage.getItem('cc_pp')||'',amt=cur.amt.toFixed(2),note=encodeURIComponent('Cookies & Co. — '+cur.name);
   let h='';
   if(pu){
     h+=`<a class="pb pbpp" href="https://paypal.me/${pu}/${amt}" target="_blank" onclick="rec('PayPal')">🔵 Pay $${amt} with PayPal</a>`;
     h+=`<a class="pb pbvm" href="https://venmo.com/${pu}?txn=pay&amount=${amt}&note=${note}" target="_blank" onclick="rec('Venmo')">💙 Pay $${amt} with Venmo</a>`;
     h+=`<a class="pb pbca" href="https://cash.app/$${pu}/${amt}" target="_blank" onclick="rec('Cash App')">💚 Pay $${amt} with Cash App</a>`;
   } else {
-    h+=`<div style="background:#fef9c3;border:1px solid #fde68a;border-radius:4px;padding:14px;font-size:13px;color:#92400e;margin-bottom:4px">⚠️ Online payment isn't set up yet — Ahana will collect at pickup.</div>`;
+    h+=`<div style="background:#fef9c3;border:1px solid #fde68a;border-radius:4px;padding:14px;font-size:13px;color:#92400e;margin-bottom:4px">⚠️ Payment not set up yet — Ahana will collect at pickup.</div>`;
   }
   h+=`<button class="pb pbip" style="border:1.5px solid var(--bd)" onclick="rec('Pay at Pickup')">🤝 Pay at Pickup (Cash)</button>`;
   document.getElementById('payOpts').innerHTML=h;showS(3);
 }
-
 function rec(method){
-  const orderTime=fmtDateTime();
-  const o={id:Date.now(),item:cur.name,price:cur.price,
-    name:document.getElementById('oN').value.trim(),
-    contact:document.getElementById('oC').value.trim(),
-    pickup:document.getElementById('oPU').value||'TBD',
-    notes:document.getElementById('oR').value,
-    payment:method,time:orderTime};
-  orders.unshift(o);save();
-  document.getElementById('confirmDetail').innerHTML=
-    `<strong>Item:</strong> ${o.item} (${o.price})<br>
-     <strong>Name:</strong> ${o.name}<br>
-     <strong>Contact:</strong> ${o.contact}<br>
-     <strong>Pickup:</strong> ${o.pickup}<br>
-     ${o.notes?`<strong>Requests:</strong> ${o.notes}<br>`:''}
-     <strong>Payment:</strong> ${o.payment}<br>
-     <strong>Order placed:</strong> ${o.time}`;
+  const o={id:Date.now(),item:cur.name,price:cur.price,name:document.getElementById('oN').value.trim(),contact:document.getElementById('oC').value.trim(),pickup:document.getElementById('oPU').value||'TBD',notes:document.getElementById('oR').value,payment:method,time:fmtDateTime()};
+  orders.unshift(o);localStorage.setItem('cc_orders',JSON.stringify(orders));
+  document.getElementById('confirmDetail').innerHTML=`<strong>Item:</strong> ${o.item} (${o.price})<br><strong>Name:</strong> ${o.name}<br><strong>Contact:</strong> ${o.contact}<br><strong>Pickup:</strong> ${o.pickup}<br>${o.notes?`<strong>Requests:</strong> ${o.notes}<br>`:''}<strong>Payment:</strong> ${o.payment}<br><strong>Ordered:</strong> ${o.time}`;
   showS(4);renderOrders();
 }
-
 function addItem(){
   const n=document.getElementById('aN').value.trim(),p=document.getElementById('aP').value.trim();
   if(!n||!p){alert('Please enter a name and price!');return;}
   const amt=parseFloat(p.replace(/[^0-9.]/g,''))||0;
-  items.push({id:Date.now(),name:n,price:'$'+amt.toFixed(2),amt,cat:document.getElementById('aC').value,
-    desc:document.getElementById('aD').value.trim(),ph:document.getElementById('aPh').value.trim()});
-  save();doFilter(cf,null);['aN','aP','aD','aPh'].forEach(x=>document.getElementById(x).value='');
-  alert('✅ Item added!');
+  const ni={id:Date.now(),name:n,price:'$'+amt.toFixed(2),amt,cat:document.getElementById('aC').value,desc:document.getElementById('aD').value.trim(),ph:document.getElementById('aPh').value.trim()};
+  extraItems.push(ni);items.push(ni);localStorage.setItem('cc_extra',JSON.stringify(extraItems));
+  doFilter(cf,null);['aN','aP','aD','aPh'].forEach(x=>document.getElementById(x).value='');
+  alert('✅ Added on this device! Ask Claude to add it permanently for everyone.');
 }
-
 function renderOrders(){
   const el=document.getElementById('ordersBox');
   if(!orders.length){el.innerHTML='<p style="color:#bbb;font-size:14px">No orders yet!</p>';return;}
   const bm={'PayPal':'bpp','Venmo':'bpp','Cash App':'bca','Pay at Pickup':'bip'};
-  el.innerHTML=`<table class="otbl"><thead><tr><th>Customer</th><th>Item</th><th>Pickup</th><th>Payment</th><th>Order Time</th><th></th></tr></thead><tbody>
-  ${orders.map((o,i)=>`<tr>
-    <td><strong>${o.name}</strong><br><span style="color:var(--mu);font-size:12px">${o.contact}</span>${o.notes?`<br><em style="font-size:11px;color:var(--mu)">${o.notes}</em>`:''}</td>
-    <td>${o.item}<br><strong>${o.price}</strong></td>
-    <td style="font-size:13px">${o.pickup}</td>
-    <td><span class="badge ${bm[o.payment]||'bip'}">${o.payment}</span></td>
-    <td style="font-size:11px;color:#aaa;min-width:130px">${o.time}</td>
-    <td><button class="del" onclick="delOrder(${i})">✕</button></td>
-  </tr>`).join('')}
-  </tbody></table>`;
+  el.innerHTML=`<table class="otbl"><thead><tr><th>Customer</th><th>Item</th><th>Pickup</th><th>Payment</th><th>Time</th><th></th></tr></thead><tbody>${orders.map((o,i)=>`<tr><td><strong>${o.name}</strong><br><span style="color:var(--mu);font-size:12px">${o.contact}</span>${o.notes?`<br><em style="font-size:11px;color:var(--mu)">${o.notes}</em>`:''}</td><td>${o.item}<br><strong>${o.price}</strong></td><td style="font-size:13px">${o.pickup}</td><td><span class="badge ${bm[o.payment]||'bip'}">${o.payment}</span></td><td style="font-size:11px;color:#aaa;min-width:130px">${o.time}</td><td><button class="del" onclick="delOrder(${i})">✕</button></td></tr>`).join('')}</tbody></table>`;
 }
+function delOrder(i){if(!confirm('Remove this order?'))return;orders.splice(i,1);localStorage.setItem('cc_orders',JSON.stringify(orders));renderOrders();}
 
-function delOrder(i){if(!confirm('Remove this order?'))return;orders.splice(i,1);save();renderOrders();}
-
+// ── Login ────────────────────────────────────
 function showLogin(){document.getElementById('lgModal').classList.add('on');setTimeout(()=>document.getElementById('lpw').focus(),100);}
 function closeL(){document.getElementById('lgModal').classList.remove('on');}
 function doLogin(){
   if(document.getElementById('lpw').value===PW){
-    closeL();
+    closeL();ownerOn=true;document.body.classList.add('owner-on');
     document.getElementById('aBar').classList.add('on');
     document.getElementById('aPanel').classList.add('on');
     document.getElementById('ppUser').value=localStorage.getItem('cc_pp')||'';
-    renderNotices();renderOrders();
+    renderNotices();renderOrders();doFilter(cf,null);
   } else {alert('Wrong password!');}
 }
-function doLogout(){document.getElementById('aBar').classList.remove('on');document.getElementById('aPanel').classList.remove('on');}
+function doLogout(){
+  ownerOn=false;document.body.classList.remove('owner-on');
+  document.getElementById('aBar').classList.remove('on');
+  document.getElementById('aPanel').classList.remove('on');
+  doFilter(cf,null);
+}
 function toggleAP(){
   const p=document.getElementById('aPanel');p.classList.toggle('on');
   if(p.classList.contains('on')){document.getElementById('ppUser').value=localStorage.getItem('cc_pp')||'';renderNotices();renderOrders();}
 }
 
-// ── INIT ──────────────────────────────────────────────────
+// ── Init ─────────────────────────────────────
 doFilter('all',null);
+renderVideos();
 updateBanner();
 updateStatusPill();
 </script>
