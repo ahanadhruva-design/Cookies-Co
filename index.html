@@ -675,6 +675,8 @@ loadSheetItems();
 renderVideos();
 updateBanner();
 updateStatusPill();
+// Auto-refresh items every 30 seconds
+setInterval(loadSheetItems, 30000);
 </script>
 </body>
 </html>
