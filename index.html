@@ -298,6 +298,7 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
       <h3>Place Your Order</h3><span class="ilbl" id="s1lbl"></span>
       <div id="shopStatusNote"></div>
       <div class="fg"><label>Your Name *</label><input type="text" id="oN" placeholder="e.g. Sarah M."/></div>
+      <div class="fg"><label>How many do you want? *</label><input type="number" id="oQ" placeholder="e.g. 2" min="1" value="1"/></div>
       <div class="fg"><label>Phone or Email *</label><input type="text" id="oC" placeholder="e.g. mom@email.com or 555-1234"/></div>
       <div class="fg"><label>Preferred Pickup Date &amp; Time</label><input type="text" id="oPU" placeholder="e.g. Saturday May 10 after 2pm"/></div>
       <div class="fg"><label>Special Requests</label><textarea id="oR" placeholder="Bracelet colors, allergies, anything else..."></textarea></div>
@@ -610,7 +611,7 @@ function deleteItem(id){
 function openC(id){
   cur=items.find(i=>i.id===id);
   document.getElementById('s1lbl').textContent=cur.name+' — '+cur.price;
-  ['oN','oC','oPU','oR'].forEach(x=>document.getElementById(x).value='');
+  ['oN','oC','oPU','oR'].forEach(x=>document.getElementById(x).value='');document.getElementById('oQ').value='1';
   const st=getShopStatus(),sn=document.getElementById('shopStatusNote');
   if(st.status==='busy')sn.innerHTML=`<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:6px;padding:12px 14px;font-size:13px;color:#92400e;margin-bottom:16px">📚 <strong>Heads up:</strong> Ahana is busy on weekdays. Please request a <strong>weekend pickup</strong>!</div>`;
   else if(st.status==='closed')sn.innerHTML=`<div style="background:#fee2e2;border:1px solid #fecaca;border-radius:6px;padding:12px 14px;font-size:13px;color:#991b1b;margin-bottom:16px">🚫 <strong>Closed today</strong> — you can still order for a future pickup!</div>`;
@@ -621,28 +622,26 @@ function closeC(){document.getElementById('coModal').classList.remove('on');}
 function showS(n){[1,2,3,4].forEach(x=>document.getElementById('s'+x).style.display=x===n?'block':'none');}
 function toS2(){
   const n=document.getElementById('oN').value.trim(),c=document.getElementById('oC').value.trim();
+  const q=document.getElementById('oQ').value||'1';
   if(!n||!c){alert('Please fill in your name and contact info!');return;}
   const pu=document.getElementById('oPU').value||'To be arranged',r=document.getElementById('oR').value;
-  document.getElementById('revBox').innerHTML=`<h4>Order Summary</h4><div class="sr"><span>Item</span><span>${cur.name}</span></div><div class="sr"><span>Name</span><span>${n}</span></div><div class="sr"><span>Contact</span><span>${c}</span></div><div class="sr"><span>Pickup</span><span>${pu}</span></div>${r?`<div class="sr"><span>Requests</span><span>${r}</span></div>`:''}<div class="sr tot"><span>Total</span><span>${cur.price}</span></div>`;
+  const total='$'+(cur.amt*parseInt(q)).toFixed(2);
+  document.getElementById('revBox').innerHTML=`<h4>Order Summary</h4><div class="sr"><span>Item</span><span>${cur.name}</span></div><div class="sr"><span>Quantity</span><span>${q}</span></div><div class="sr"><span>Name</span><span>${n}</span></div><div class="sr"><span>Contact</span><span>${c}</span></div><div class="sr"><span>Pickup</span><span>${pu}</span></div>${r?`<div class="sr"><span>Requests</span><span>${r}</span></div>`:''}<div class="sr tot"><span>Total</span><span>${total}</span></div>`;
   showS(2);
 }
 function toS3(){
-  const pu=localStorage.getItem('cc_pp')||'',amt=cur.amt.toFixed(2),note=encodeURIComponent('Cookies & Co. — '+cur.name);
   let h='';
-  if(pu){
-    h+=`<a class="pb pbpp" href="https://paypal.me/${pu}/${amt}" target="_blank" onclick="rec('PayPal')">🔵 Pay $${amt} with PayPal</a>`;
-    h+=`<a class="pb pbvm" href="https://venmo.com/${pu}?txn=pay&amount=${amt}&note=${note}" target="_blank" onclick="rec('Venmo')">💙 Pay $${amt} with Venmo</a>`;
-    h+=`<a class="pb pbca" href="https://cash.app/$${pu}/${amt}" target="_blank" onclick="rec('Cash App')">💚 Pay $${amt} with Cash App</a>`;
-  } else {
-    h+=`<div style="background:#fef9c3;border:1px solid #fde68a;border-radius:4px;padding:14px;font-size:13px;color:#92400e;margin-bottom:4px">⚠️ Payment not set up yet — Ahana will collect at pickup.</div>`;
-  }
-  h+=`<button class="pb pbip" style="border:1.5px solid var(--bd)" onclick="rec('Pay at Pickup')">🤝 Pay at Pickup (Cash)</button>`;
+  h+=`<button class="pb" style="background:#008cff;color:#fff" onclick="rec('Venmo — Pay at Pickup')">💙 Venmo — Pay when you pick up</button>`;
+  h+=`<button class="pb" style="background:#22c55e;color:#fff" onclick="rec('Cash — Small Order')">💵 Cash — Small orders</button>`;
+  h+=`<button class="pb" style="background:#5c3d2e;color:#fff" onclick="rec('Check — Large/Custom Order')">📝 Check — Large & custom orders</button>`;
   document.getElementById('payOpts').innerHTML=h;showS(3);
 }
 function rec(method){
-  const o={id:Date.now(),item:cur.name,price:cur.price,name:document.getElementById('oN').value.trim(),contact:document.getElementById('oC').value.trim(),pickup:document.getElementById('oPU').value||'TBD',notes:document.getElementById('oR').value,payment:method,time:fmtDateTime()};
+  const q=document.getElementById('oQ').value||'1';
+  const total='$'+(cur.amt*parseInt(q)).toFixed(2);
+  const o={id:Date.now(),item:cur.name,qty:q,price:total,name:document.getElementById('oN').value.trim(),contact:document.getElementById('oC').value.trim(),pickup:document.getElementById('oPU').value||'TBD',notes:document.getElementById('oR').value,payment:method,time:fmtDateTime()};
   orders.unshift(o);localStorage.setItem('cc_orders',JSON.stringify(orders));
-  document.getElementById('confirmDetail').innerHTML=`<strong>Item:</strong> ${o.item} (${o.price})<br><strong>Name:</strong> ${o.name}<br><strong>Contact:</strong> ${o.contact}<br><strong>Pickup:</strong> ${o.pickup}<br>${o.notes?`<strong>Requests:</strong> ${o.notes}<br>`:''}<strong>Payment:</strong> ${o.payment}<br><strong>Ordered:</strong> ${o.time}`;
+  document.getElementById('confirmDetail').innerHTML=`<strong>Item:</strong> ${o.item} x${o.qty} (${o.price})<br><strong>Name:</strong> ${o.name}<br><strong>Contact:</strong> ${o.contact}<br><strong>Pickup:</strong> ${o.pickup}<br>${o.notes?`<strong>Requests:</strong> ${o.notes}<br>`:''}<strong>Payment:</strong> ${o.payment}<br><strong>Ordered:</strong> ${o.time}`;
   showS(4);renderOrders();
 }
 function addItem(){
