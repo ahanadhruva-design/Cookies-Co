@@ -365,36 +365,49 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
 // ════════════════════════════
 const PW = 'friends4ever';
 
-// ════════════════════════════
-// 🛍️ SHOP ITEMS
-// Add new items here so EVERYONE can see them!
-// ════════════════════════════
-const SHOP_ITEMS = [
-  {id:1, name:'Cookie Box', price:'$7.99', amt:7.99, cat:'Baked Goods',
-   desc:'6 freshly baked cookies — pick your favorite flavor!',
-   ph:'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600&auto=format&fit=crop'},
-  {id:2, name:'Brownie Bites', price:'$4.99', amt:4.99, cat:'Baked Goods',
-   desc:'4 chewy, fudgy brownies baked fresh.',
-   ph:'https://images.unsplash.com/photo-1515037893149-de7f840978e2?w=600&auto=format&fit=crop'},
-  {id:3, name:'Frosted Cupcakes', price:'$4.99', amt:4.99, cat:'Baked Goods',
-   desc:'2 beautifully decorated cupcakes.',
-   ph:'https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=600&auto=format&fit=crop'},
-  {id:4, name:'Red Velvet w/ Chocolate Chips', price:'$10.99', amt:10.99, cat:'Baked Goods',
-   desc:'8 freshly baked cookies, fresh from the oven!',
-   ph:'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&auto=format&fit=crop'},
-  {id:5, name:'Chocolate Cookies w/ Caramel', price:'$11.99', amt:11.99, cat:'Baked Goods',
-   desc:'10 chocolate cookies with caramel, warm and packed up!',
-   ph:'https://images.unsplash.com/photo-1548365328-8c6db3220e4e?w=600&auto=format&fit=crop'},
-  {id:6, name:'Friendship Bracelet', price:'$2.00', amt:2.00, cat:'Friendship Bracelets',
-   desc:'Handmade just for you — tell me your colors!',
-   ph:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&auto=format&fit=crop'},
-  {id:7, name:'Bracelet Bundle (x3)', price:'$5.99', amt:5.99, cat:'Friendship Bracelets',
-   desc:'3 handmade bracelets — perfect gift!',
-   ph:'https://images.unsplash.com/photo-1573408301185-9519f94bf4c4?w=600&auto=format&fit=crop'},
-  {id:8, name:'Mystery Toy', price:'$3.00', amt:3.00, cat:'Toys & Fun Things',
-   desc:'A fun surprise item — everyone loves them!',
-   ph:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop'},
-];
+// ════════════════════════════════════════════════════
+// 🛍️ SHOP ITEMS — loaded from Google Sheets!
+// To add a new item: just add a row to your sheet at:
+// https://docs.google.com/spreadsheets/d/1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o
+// Columns: name | price | category | description | photo
+// ════════════════════════════════════════════════════
+const SHEET_ID = '1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o';
+const SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+const SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(SHEET_CSV)}`;
+
+async function loadSheetItems(){
+  const grid = document.getElementById('pgrid');
+  if(grid) grid.innerHTML = '<p style="color:#bbb;padding:20px;font-size:14px">Loading items... 🍪</p>';
+  try {
+    const res = await fetch(SHEET_URL);
+    const text = await res.text();
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+    items = lines.slice(1).map((line,i)=>{
+      const cols=[];let cur='',inQ=false;
+      for(let c of line){if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=c;}
+      cols.push(cur.trim());
+      const row={};headers.forEach((h,j)=>row[h]=(cols[j]||'').replace(/^"|"$/g,''));
+      const amt=parseFloat(row.price)||0;
+      return{id:i+1,name:row.name||'',price:'$'+amt.toFixed(2),amt,cat:row.category||'Baked Goods',desc:row.description||'',ph:row.photo||''};
+    }).filter(i=>i.name);
+    doFilter('all',null);
+  } catch(e) {
+    console.error('Could not load sheet:', e);
+    // Fallback to hardcoded items if sheet fails
+    items = [
+      {id:1,name:'Cookie Box',price:'$7.99',amt:7.99,cat:'Baked Goods',desc:'6 freshly baked cookies — pick your favorite flavor!',ph:'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600&auto=format&fit=crop'},
+      {id:2,name:'Brownie Bites',price:'$4.99',amt:4.99,cat:'Baked Goods',desc:'4 chewy, fudgy brownies baked fresh.',ph:'https://images.unsplash.com/photo-1515037893149-de7f840978e2?w=600&auto=format&fit=crop'},
+      {id:3,name:'Frosted Cupcakes',price:'$4.99',amt:4.99,cat:'Baked Goods',desc:'2 beautifully decorated cupcakes.',ph:'https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=600&auto=format&fit=crop'},
+      {id:4,name:'Red Velvet w/ Chocolate Chips',price:'$10.99',amt:10.99,cat:'Baked Goods',desc:'8 freshly baked cookies, fresh from the oven!',ph:'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&auto=format&fit=crop'},
+      {id:5,name:'Chocolate Cookies w/ Caramel',price:'$11.99',amt:11.99,cat:'Baked Goods',desc:'10 chocolate cookies with caramel, warm and packed up!',ph:'https://images.unsplash.com/photo-1548365328-8c6db3220e4e?w=600&auto=format&fit=crop'},
+      {id:6,name:'Friendship Bracelet',price:'$2.00',amt:2.00,cat:'Friendship Bracelets',desc:'Handmade just for you — tell me your colors!',ph:'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&auto=format&fit=crop'},
+      {id:7,name:'Bracelet Bundle (x3)',price:'$5.99',amt:5.99,cat:'Friendship Bracelets',desc:'3 handmade bracelets — perfect gift!',ph:'https://images.unsplash.com/photo-1573408301185-9519f94bf4c4?w=600&auto=format&fit=crop'},
+      {id:8,name:'Mystery Toy',price:'$3.00',amt:3.00,cat:'Toys & Fun Things',desc:'A fun surprise item — everyone loves them!',ph:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop'},
+    ];
+    doFilter('all', null);
+  }
+}
 
 // ════════════════════════════
 // 🎬 VIDEOS (base list)
@@ -407,16 +420,10 @@ const BASE_VIDEOS = [
 
 // ── State ────────────────────────────────────
 const EM = {'Baked Goods':'🍪','Friendship Bracelets':'📿','Toys & Fun Things':'🎁'};
-let overrides  = JSON.parse(localStorage.getItem('cc_overrides')||'{}');
-let extraItems = JSON.parse(localStorage.getItem('cc_extra')||'[]');
-let deletedIds = JSON.parse(localStorage.getItem('cc_deleted')||'[]');
-let videos     = JSON.parse(localStorage.getItem('cc_videos')||JSON.stringify(BASE_VIDEOS));
-let orders     = JSON.parse(localStorage.getItem('cc_orders')||'[]');
-let notices    = JSON.parse(localStorage.getItem('cc_notices')||'[]');
-let items      = SHOP_ITEMS
-  .filter(i=>!deletedIds.includes(i.id))
-  .map(i=>overrides[i.id]?{...i,...overrides[i.id]}:i)
-  .concat(extraItems);
+let videos  = JSON.parse(localStorage.getItem('cc_videos')||JSON.stringify(BASE_VIDEOS));
+let orders  = JSON.parse(localStorage.getItem('cc_orders')||'[]');
+let notices = JSON.parse(localStorage.getItem('cc_notices')||'[]');
+let items   = [];
 let cur=null, cf='all', ownerOn=false, openDotsId=null;
 
 function savePP(){localStorage.setItem('cc_pp',document.getElementById('ppUser').value.trim());}
@@ -680,7 +687,7 @@ function toggleAP(){
 }
 
 // ── Init ─────────────────────────────────────
-doFilter('all',null);
+loadSheetItems();
 renderVideos();
 updateBanner();
 updateStatusPill();
