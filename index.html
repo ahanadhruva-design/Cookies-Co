@@ -371,7 +371,8 @@ async function loadSheetItems(){
   const grid = document.getElementById('pgrid');
   if(grid) grid.innerHTML = '<p style="color:#bbb;padding:20px;font-size:14px">Loading items... 🍪</p>';
   try {
-    const res = await fetch(SHEET_URL);
+    const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(SHEET_CSV)}&_=${Date.now()}`;
+    const res = await fetch(url, {cache:'no-store'});
     const text = await res.text();
     const lines = text.trim().split('\n');
     const headers = lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
