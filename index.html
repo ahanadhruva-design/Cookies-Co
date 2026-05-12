@@ -165,6 +165,8 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:40px 24px;margin-
 .infobox{background:#e8f4fd;border:1px solid #93c5fd;border-radius:6px;padding:14px 16px;font-size:13px;color:#1e40af;margin-bottom:20px;max-width:700px;line-height:1.6}
 @media(max-width:640px){.hdr{justify-content:center}.hero h1{font-size:2rem}.aboutg,.agrid{grid-template-columns:1fr}.full{grid-column:1}.modal{padding:22px 18px}.srchbar input{width:160px}.notice-row{flex-direction:column}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('ctB4TQSDQCbFvQBJd');</script>
 </head>
 <body>
 <div class="topbar">✨ Handmade with love · Pickup orders · Made by Ahana ✨</div>
@@ -643,6 +645,18 @@ function rec(method){
   orders.unshift(o);localStorage.setItem('cc_orders',JSON.stringify(orders));
   document.getElementById('confirmDetail').innerHTML=`<strong>Item:</strong> ${o.item} x${o.qty} (${o.price})<br><strong>Name:</strong> ${o.name}<br><strong>Contact:</strong> ${o.contact}<br><strong>Pickup:</strong> ${o.pickup}<br>${o.notes?`<strong>Requests:</strong> ${o.notes}<br>`:''}<strong>Payment:</strong> ${o.payment}<br><strong>Ordered:</strong> ${o.time}`;
   showS(4);renderOrders();
+  // Send email to Ahana
+  emailjs.send('service_dfsfzpd','template_lvmx2nm',{
+    item: o.item,
+    qty: o.qty,
+    price: o.price,
+    customer_name: o.name,
+    contact: o.contact,
+    pickup: o.pickup,
+    notes: o.notes||'None',
+    payment: o.payment,
+    time: o.time
+  }).catch(err=>console.log('Email error:',err));
 }
 function addItem(){
   window.open('https://docs.google.com/spreadsheets/d/1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o/edit','_blank');
