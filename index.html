@@ -436,30 +436,37 @@ function removeVideo(i){if(!confirm('Remove?'))return;videos.splice(i,1);saveVid
 // LOAD ANNOUNCEMENTS
 // ════════════════════════════
 async function loadAnnouncements(){
-  const url=`https://docs.google.com/spreadsheets/d/e/${PUBLISHED_ID}/pub?gid=2140327138&single=true&output=csv&_=${Date.now()}`;
-  try{
-    const res=await fetch(url,{cache:'no-store'});
-    if(!res.ok)return;
-    const text=await res.text();
-    if(!text||text.length<10)return;
-    const lines=text.trim().split('\n');
-    if(lines.length<2)return;
-    const hdrs=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
-    const parsed=lines.slice(1).map(line=>{
-      const cols=[];let c='',q=false;
-      for(const ch of line){if(ch==='"'){q=!q;}else if(ch===','&&!q){cols.push(c.trim());c='';}else c+=ch;}
-      cols.push(c.trim());
-      const row={};hdrs.forEach((h,j)=>row[h]=(cols[j]||'').replace(/^"|"$/g,'').trim());
-      let expiry=row.expiry||null;
-      if(expiry&&expiry.includes('/')){
-        const p=expiry.split('/');
-        const yr=p[2]&&p[2].length===2?'20'+p[2]:p[2]||'2099';
-        expiry=`${yr}-${(p[0]||'01').padStart(2,'0')}-${(p[1]||'01').padStart(2,'0')}`;
-      }
-      return{msg:row.message||'',type:(row.type||'warn').trim(),expiry};
-    }).filter(n=>n.msg);
-    if(parsed.length>0){notices=parsed;updateBanner();}
-  }catch(e){console.log('Announcements error:',e);}
+  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=2140327138`;
+  const proxies=[
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(CSV)}`,
+  ];
+  for(const url of proxies){
+    try{
+      const res=await fetch(url,{cache:'no-store'});
+      if(!res.ok)continue;
+      const text=await res.text();
+      if(!text||text.length<10)continue;
+      const lines=text.trim().split('\n');
+      if(lines.length<2)continue;
+      const hdrs=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+      const parsed=lines.slice(1).map(line=>{
+        const cols=[];let c='',q=false;
+        for(const ch of line){if(ch==='"'){q=!q;}else if(ch===','&&!q){cols.push(c.trim());c='';}else c+=ch;}
+        cols.push(c.trim());
+        const row={};hdrs.forEach((h,j)=>row[h]=(cols[j]||'').replace(/^"|"$/g,'').trim());
+        let expiry=row.expiry||null;
+        if(expiry&&expiry.includes('/')){
+          const p=expiry.split('/');
+          const yr=p[2]&&p[2].length===2?'20'+p[2]:p[2]||'2099';
+          expiry=`${yr}-${(p[0]||'01').padStart(2,'0')}-${(p[1]||'01').padStart(2,'0')}`;
+        }
+        return{msg:row.message||'',type:(row.type||'warn').trim(),expiry};
+      }).filter(n=>n.msg);
+      if(parsed.length>0){notices=parsed;updateBanner();return;}
+    }catch(e){continue;}
+  }
 }
 
 // ════════════════════════════
