@@ -382,17 +382,19 @@ async function loadItems(){
       if(!res.ok)continue;
       const text=await res.text();
       if(!text||text.length<10)continue;
-      const parsed=parseCSV(text);
-      if(parsed.length===0)continue;
-      // Check for announcement in first data row
       const lines=text.trim().split('\n');
       const hdrs=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
       const annIdx=hdrs.indexOf('announcement');
       const annTypeIdx=hdrs.indexOf('announcetype');
+      const parsed=parseCSV(text);
+      if(parsed.length===0)continue;
+      // Read announcement using proper quote-aware CSV parsing
       if(annIdx>-1&&lines.length>1){
-        const firstRow=lines[1].split(',');
-        const msg=(firstRow[annIdx]||'').replace(/^"|"$/g,'').trim();
-        const type=(firstRow[annTypeIdx]||'warn').replace(/^"|"$/g,'').trim();
+        const cols=[];let c='',q=false;
+        for(const ch of lines[1]){if(ch==='"'){q=!q;}else if(ch===','&&!q){cols.push(c.trim());c='';}else c+=ch;}
+        cols.push(c.trim());
+        const msg=(cols[annIdx]||'').replace(/^"|"$/g,'').trim();
+        const type=(annTypeIdx>-1?(cols[annTypeIdx]||''):'warn').replace(/^"|"$/g,'').trim()||'warn';
         if(msg){notices=[{msg,type,expiry:null}];updateBanner();}
       }
       items=parsed.filter(i=>!hidden.includes(i.name)).map(i=>overrides[i.id]?{...i,...overrides[i.id]}:i);
