@@ -329,9 +329,9 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
       <h3>How would you like to pay?</h3>
       <p style="font-size:12px;color:var(--mu);margin:5px 0 16px">Tap a button to confirm your order!</p>
       <div class="payopts">
-        <button class="pb" style="background:#008cff;color:#fff" onclick="rec('Venmo — Pay at Pickup')">💙 Venmo — Pay when you pick up</button>
-        <button class="pb" style="background:#22c55e;color:#fff" onclick="rec('Cash — Small Orders')">💵 Cash — Small orders</button>
-        <button class="pb" style="background:#5c3d2e;color:#fff" onclick="rec('Check — Large/Custom')">📝 Check — Large & custom orders</button>
+        <button class="pb" style="background:#008cff;color:#fff" onclick="rec('Venmo - Pay at Pickup')">💙 Venmo — Pay when you pick up</button>
+        <button class="pb" style="background:#22c55e;color:#fff" onclick="rec('Cash - Small Orders')">💵 Cash — Small orders</button>
+        <button class="pb" style="background:#5c3d2e;color:#fff" onclick="rec('Check - Large or Custom')">📝 Check — Large &amp; custom orders</button>
       </div>
       <button class="mbtns" style="width:100%;margin-top:12px" onclick="showS(2)">← Back</button>
     </div>
@@ -639,6 +639,7 @@ function toS2(){
   showS(2);
 }
 function rec(method){
+  try{
   const q=parseInt(document.getElementById('oQ').value)||1;
   const total='$'+(cur.amt*q).toFixed(2);
   const o={id:Date.now(),item:cur.name,qty:q,price:total,
@@ -657,7 +658,6 @@ function rec(method){
      <strong>Payment:</strong> ${o.payment}<br>
      <strong>Ordered:</strong> ${o.time}`;
   showS(4);renderOrders();
-  // Send email
   emailjs.send(EJS_SVC,EJS_TPL,{
     item:o.item,qty:o.qty,price:o.price,
     customer_name:o.name,contact:o.contact,
@@ -665,6 +665,7 @@ function rec(method){
     payment:o.payment,time:o.time,
     message:`New order: ${o.item} x${o.qty} (${o.price}) from ${o.name}`
   }).catch(err=>console.log('Email error:',err));
+  }catch(err){alert('Something went wrong: '+err.message);}
 }
 
 // ════════════════════════════
