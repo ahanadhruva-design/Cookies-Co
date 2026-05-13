@@ -368,12 +368,11 @@ function fmtDT(){return new Date().toLocaleString('en-US',{weekday:'long',year:'
 // Tries multiple proxies — falls back to hardcoded items
 // ════════════════════════════
 async function loadItems(){
-  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
-  const proxies=[
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
-    `https://corsproxy.io/?${encodeURIComponent(CSV)}`,
+  const urls=[
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0&_=${Date.now()}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`)}&_=${Date.now()}`,
   ];
-  for(const url of proxies){
+  for(const url of urls){
     try{
       const res=await fetch(url,{cache:'no-store'});
       if(!res.ok)continue;
@@ -429,55 +428,15 @@ function removeVideo(i){if(!confirm('Remove?'))return;videos.splice(i,1);saveVid
 // ════════════════════════════
 // LOAD ANNOUNCEMENTS FROM SHEET
 // ════════════════════════════
-async function loadAnnouncements(){
-  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Announcements`;
-  const proxies=[
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
-    `https://corsproxy.io/?${encodeURIComponent(CSV)}`,
-  ];
-  for(const url of proxies){
-    try{
-      const res=await fetch(url,{cache:'no-store'});
-      if(!res.ok) continue;
-      const text=await res.text();
-      if(!text||text.length<10) continue;
-      const lines=text.trim().split('\n');
-      const hdrs=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
-      const sheetNotices=lines.slice(1).map(line=>{
-        const cols=[];let c='',q=false;
-        for(const ch of line){if(ch==='"'){q=!q;}else if(ch===','&&!q){cols.push(c.trim());c='';}else c+=ch;}
-        cols.push(c.trim());
-        const row={};hdrs.forEach((h,j)=>row[h]=(cols[j]||'').replace(/^"|"$/g,'').trim());
-        // Handle multiple date formats: MM/DD/YY, MM/DD/YYYY, YYYY-MM-DD
-        let expiry = row.expiry||null;
-        if(expiry){
-          if(expiry.includes('/')){
-            const parts=expiry.split('/');
-            const yr=parts[2].length===2?'20'+parts[2]:parts[2];
-            expiry=`${yr}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
-          }
-        }
-        return{id:Math.random(),msg:row.message||'',type:row.type||'warn',expiry};
-      }).filter(n=>n.msg);
-      if(sheetNotices.length>0){
-        notices=sheetNotices;
-        updateBanner();updateStatusPill();
-      }
-      return;
-    }catch(e){continue;}
-  }
-}
-
 // ════════════════════════════
-// LOAD ANNOUNCEMENTS (Google Viz API — no proxy needed!)
+// LOAD ANNOUNCEMENTS
 // ════════════════════════════
 async function loadAnnouncements(){
-  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Announcements`;
-  const proxies=[
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
-    `https://corsproxy.io/?${encodeURIComponent(CSV)}`,
+  const urls=[
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Announcements&_=${Date.now()}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Announcements`)}&_=${Date.now()}`,
   ];
-  for(const url of proxies){
+  for(const url of urls){
     try{
       const res=await fetch(url,{cache:'no-store'});
       if(!res.ok)continue;
