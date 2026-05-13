@@ -435,6 +435,40 @@ function addVideoSlot(){videos.push({title:'',youtubeId:''});saveVideos();render
 function removeVideo(i){if(!confirm('Remove?'))return;videos.splice(i,1);saveVideos();renderVideos();}
 
 // ════════════════════════════
+// LOAD ANNOUNCEMENTS FROM SHEET
+// ════════════════════════════
+async function loadAnnouncements(){
+  const GID='2140327138';
+  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+  const proxies=[
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}`,
+  ];
+  for(const url of proxies){
+    try{
+      const res=await fetch(url,{cache:'no-store'});
+      if(!res.ok) continue;
+      const text=await res.text();
+      if(!text||text.length<10) continue;
+      const lines=text.trim().split('\n');
+      const hdrs=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+      const sheetNotices=lines.slice(1).map(line=>{
+        const cols=[];let c='',q=false;
+        for(const ch of line){if(ch==='"'){q=!q;}else if(ch===','&&!q){cols.push(c.trim());c='';}else c+=ch;}
+        cols.push(c.trim());
+        const row={};hdrs.forEach((h,j)=>row[h]=(cols[j]||'').replace(/^"|"$/g,'').trim());
+        return{id:Math.random(),msg:row.message||'',type:row.type||'warn',expiry:row.expiry||null};
+      }).filter(n=>n.msg);
+      if(sheetNotices.length>0){
+        notices=sheetNotices;
+        updateBanner();updateStatusPill();
+      }
+      return;
+    }catch(e){continue;}
+  }
+}
+
+// ════════════════════════════
 // STATUS
 // ════════════════════════════
 function getHols(y){
@@ -667,6 +701,7 @@ function toggleAP(){
 // INIT
 // ════════════════════════════
 loadItems();
+loadAnnouncements();
 updateBanner();
 updateStatusPill();
 </script>
