@@ -451,7 +451,16 @@ async function loadAnnouncements(){
         for(const ch of line){if(ch==='"'){q=!q;}else if(ch===','&&!q){cols.push(c.trim());c='';}else c+=ch;}
         cols.push(c.trim());
         const row={};hdrs.forEach((h,j)=>row[h]=(cols[j]||'').replace(/^"|"$/g,'').trim());
-        return{id:Math.random(),msg:row.message||'',type:row.type||'warn',expiry:row.expiry||null};
+        // Handle multiple date formats: MM/DD/YY, MM/DD/YYYY, YYYY-MM-DD
+        let expiry = row.expiry||null;
+        if(expiry){
+          if(expiry.includes('/')){
+            const parts=expiry.split('/');
+            const yr=parts[2].length===2?'20'+parts[2]:parts[2];
+            expiry=`${yr}-${parts[0].padStart(2,'0')}-${parts[1].padStart(2,'0')}`;
+          }
+        }
+        return{id:Math.random(),msg:row.message||'',type:row.type||'warn',expiry};
       }).filter(n=>n.msg);
       if(sheetNotices.length>0){
         notices=sheetNotices;
