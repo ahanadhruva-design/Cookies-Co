@@ -367,7 +367,7 @@ function fmtDT(){return new Date().toLocaleString('en-US',{weekday:'long',year:'
 // LOAD FROM GOOGLE SHEET
 // Tries multiple proxies — falls back to hardcoded items
 // ════════════════════════════
-const PUBLISHED_ID = '2PACX-1vTJ7bNurGMbMN__frGvR3YgLG45SeRm8oFbFzjK8c8aNhvPhY6qqfFNRxb7HNB3wSpT73F_HT3xxRzl';
+const PUBLISHED_ID = '2PACX-1vTJ7bNurGMbMN__frGvR3YgLG45SeRm8oFbFzjK8c8aNhvPhY6qqfFNRxb7HNB3wSpT73F_HT3xxRzI';
 
 async function loadItems(){
   const url=`https://docs.google.com/spreadsheets/d/e/${PUBLISHED_ID}/pub?gid=0&single=true&output=csv&_=${Date.now()}`;
