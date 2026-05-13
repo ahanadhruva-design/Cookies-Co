@@ -170,17 +170,11 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <label class="albl">💳 PayPal.me Username</label>
     <input class="ainput" type="text" id="ppUser" placeholder="e.g. AhanaShop" oninput="savePP()" style="max-width:400px"/>
 
-    <!-- Announcement -->
+    <!-- Announcements -->
     <div class="atitle">📢 Post Announcement</div>
-    <div class="abox">
-      <div class="arow">
-        <input type="text" id="noticeMsg" placeholder="e.g. Out of town this weekend!"/>
-        <select id="noticeType"><option value="warn">⚠️ Warning</option><option value="info">ℹ️ Info</option><option value="closed">🚫 Closed</option></select>
-        <input type="date" id="noticeExpiry"/>
-        <button class="abtn" style="margin:0" onclick="postNotice()">Post</button>
-      </div>
-      <div id="activeNotices"></div>
-    </div>
+    <div class="infobox">To post an announcement everyone sees, add a row to your <strong>Announcements</strong> tab in Google Sheets!<br>
+    Columns: <strong>message</strong> | <strong>type</strong> (warn/info/closed) | <strong>expiry</strong> (date, optional)<br><br>
+    <strong><a href="https://docs.google.com/spreadsheets/d/1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o/edit#gid=2140327138" target="_blank" style="color:#1e40af">Open Announcements Sheet →</a></strong></div>
 
     <div class="abox">
     </div>
