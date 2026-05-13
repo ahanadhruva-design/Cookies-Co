@@ -368,24 +368,24 @@ function fmtDT(){return new Date().toLocaleString('en-US',{weekday:'long',year:'
 // Tries multiple proxies — falls back to hardcoded items
 // ════════════════════════════
 async function loadItems(){
-  try{
-    const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1&_=${Date.now()}`;
-    const res=await fetch(url,{cache:'no-store'});
-    const text=await res.text();
-    const json=JSON.parse(text.replace(/^[^(]+\(|\);?$/g,''));
-    const cols=json.table.cols.map(c=>(c.label||'').toLowerCase().trim());
-    const rows=json.table.rows;
-    if(rows&&rows.length>0){
-      items=rows.map((r,i)=>{
-        const row={};cols.forEach((h,j)=>row[h]=r.c[j]&&r.c[j].v!=null?r.c[j].v.toString().trim():'');
-        const amt=parseFloat(row.price)||0;
-        return{id:i+1,name:row.name||'',price:'$'+amt.toFixed(2),amt,cat:row.category||'Baked Goods',desc:row.description||'',ph:row.photo||''};
-      }).filter(i=>i.name).filter(i=>!hidden.includes(i.name)).map(i=>overrides[i.id]?{...i,...overrides[i.id]}:i);
+  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+  const proxies=[
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}`,
+  ];
+  for(const url of proxies){
+    try{
+      const res=await fetch(url,{cache:'no-store'});
+      if(!res.ok)continue;
+      const text=await res.text();
+      if(!text||text.length<10)continue;
+      const parsed=parseCSV(text);
+      if(parsed.length===0)continue;
+      items=parsed.filter(i=>!hidden.includes(i.name)).map(i=>overrides[i.id]?{...i,...overrides[i.id]}:i);
       doFilter(cf,null);
       return;
-    }
-  }catch(e){console.log('Sheet load error:',e);}
-  // Fallback
+    }catch(e){continue;}
+  }
   items=FALLBACK.filter(i=>!hidden.includes(i.name)).map(i=>overrides[i.id]?{...i,...overrides[i.id]}:i);
   doFilter(cf,null);
 }
@@ -472,21 +472,37 @@ async function loadAnnouncements(){
 // LOAD ANNOUNCEMENTS (Google Viz API — no proxy needed!)
 // ════════════════════════════
 async function loadAnnouncements(){
-  try{
-    const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Announcements&_=${Date.now()}`;
-    const res=await fetch(url,{cache:'no-store'});
-    const text=await res.text();
-    const json=JSON.parse(text.replace(/^[^(]+\(|\);?$/g,''));
-    const rows=json.table.rows;
-    if(!rows||rows.length===0)return;
-    const today=new Date().toISOString().slice(0,10);
-    notices=rows.map(r=>({
-      msg:r.c[0]&&r.c[0].v?r.c[0].v.toString():'',
-      type:r.c[1]&&r.c[1].v?r.c[1].v.toString().trim():'warn',
-      expiry:r.c[2]&&r.c[2].v?r.c[2].v.toString().trim():null
-    })).filter(n=>n.msg);
-    updateBanner();
-  }catch(e){console.log('Announcements fetch error:',e);}
+  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Announcements`;
+  const proxies=[
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}`,
+  ];
+  for(const url of proxies){
+    try{
+      const res=await fetch(url,{cache:'no-store'});
+      if(!res.ok)continue;
+      const text=await res.text();
+      if(!text||text.length<10)continue;
+      const lines=text.trim().split('\n');
+      if(lines.length<2)continue;
+      const hdrs=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+      const parsed=lines.slice(1).map(line=>{
+        const cols=[];let c='',q=false;
+        for(const ch of line){if(ch==='"'){q=!q;}else if(ch===','&&!q){cols.push(c.trim());c='';}else c+=ch;}
+        cols.push(c.trim());
+        const row={};hdrs.forEach((h,j)=>row[h]=(cols[j]||'').replace(/^"|"$/g,'').trim());
+        let expiry=row.expiry||null;
+        if(expiry&&expiry.includes('/')){
+          const p=expiry.split('/');
+          const yr=p[2]&&p[2].length===2?'20'+p[2]:p[2]||'2099';
+          expiry=`${yr}-${(p[0]||'01').padStart(2,'0')}-${(p[1]||'01').padStart(2,'0')}`;
+        }
+        return{msg:row.message||'',type:(row.type||'warn').trim(),expiry};
+      }).filter(n=>n.msg);
+      if(parsed.length>0){notices=parsed;updateBanner();}
+      return;
+    }catch(e){continue;}
+  }
 }
 
 // ════════════════════════════
