@@ -384,6 +384,17 @@ async function loadItems(){
       if(!text||text.length<10)continue;
       const parsed=parseCSV(text);
       if(parsed.length===0)continue;
+      // Check for announcement in first data row
+      const lines=text.trim().split('\n');
+      const hdrs=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase());
+      const annIdx=hdrs.indexOf('announcement');
+      const annTypeIdx=hdrs.indexOf('announcetype');
+      if(annIdx>-1&&lines.length>1){
+        const firstRow=lines[1].split(',');
+        const msg=(firstRow[annIdx]||'').replace(/^"|"$/g,'').trim();
+        const type=(firstRow[annTypeIdx]||'warn').replace(/^"|"$/g,'').trim();
+        if(msg){notices=[{msg,type,expiry:null}];updateBanner();}
+      }
       items=parsed.filter(i=>!hidden.includes(i.name)).map(i=>overrides[i.id]?{...i,...overrides[i.id]}:i);
       doFilter(cf,null);
       return;
