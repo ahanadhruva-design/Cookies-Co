@@ -432,8 +432,7 @@ function removeVideo(i){if(!confirm('Remove?'))return;videos.splice(i,1);saveVid
 // LOAD ANNOUNCEMENTS FROM SHEET
 // ════════════════════════════
 async function loadAnnouncements(){
-  const GID='2140327138';
-  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Announcements`;
   const proxies=[
     `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
     `https://corsproxy.io/?${encodeURIComponent(CSV)}`,
