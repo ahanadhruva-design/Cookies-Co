@@ -771,26 +771,26 @@ function rec(method){
      <strong>Payment:</strong> ${o.payment}<br>
      <strong>Ordered:</strong> ${o.time}`;
   showS(4);renderOrders();
+  const discText=disc>0?`YES - $${disc.toFixed(2)} off`:'No discount';
   emailjs.send(EJS_SVC,EJS_TPL,{
     item:o.item,qty:o.qty,price:o.price,
     customer_name:o.name,contact:o.contact,
     pickup:o.pickup,notes:o.notes||'None',
     payment:o.payment,time:o.time,
-    message:[
-      '🍪 NEW ORDER — Cookies & Co.',
-      '─────────────────────────',
-      `Item:     ${o.item}`,
-      `Qty:      ${o.qty}`,
-      `Price:    ${o.price}${disc>0?' ($'+disc.toFixed(2)+' discount applied!)':''}`,
-      '─────────────────────────',
-      `Name:     ${o.name}`,
-      `Contact:  ${o.contact}`,
-      `Pickup:   ${o.pickup}`,
-      `Requests: ${o.notes||'None'}`,
-      `Payment:  ${o.payment}`,
-      '─────────────────────────',
-      `Ordered:  ${o.time}`,
-    ].join('\n')
+    message:`🍪 NEW ORDER — Cookies & Co.
+━━━━━━━━━━━━━━━━━━━━━
+Item:       ${o.item}
+Qty:        ${o.qty}
+Total:      ${o.price}
+Discount:   ${discText}
+━━━━━━━━━━━━━━━━━━━━━
+Name:       ${o.name}
+Contact:    ${o.contact}
+Pickup:     ${o.pickup}
+Requests:   ${o.notes||'None'}
+Payment:    ${o.payment}
+━━━━━━━━━━━━━━━━━━━━━
+Time:       ${o.time}`
   }).catch(err=>console.log('Email error:',err));
   }catch(err){alert('Something went wrong: '+err.message);}
 }
