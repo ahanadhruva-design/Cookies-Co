@@ -91,6 +91,49 @@ nav{background:var(--br)}
 .cbuy{background:var(--br);color:#fff;border:none;border-radius:20px;padding:7px 18px;font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;text-transform:uppercase;font-family:var(--sa)}
 .cbuy:hover{background:var(--pkd)}
 
+/* BADGES */
+.badge-new{position:absolute;top:8px;left:8px;background:#22c55e;color:#fff;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:10px;z-index:5}
+.badge-best{position:absolute;top:8px;left:8px;background:#f59e0b;color:#fff;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:10px;z-index:5}
+
+/* DISCOUNT */
+.disc-box{background:linear-gradient(135deg,#fdf0f4,#fce4ef);border:1.5px solid var(--pk);border-radius:8px;padding:14px 18px;margin:0 24px 20px;max-width:600px;display:flex;align-items:center;gap:12px}
+.disc-box input{flex:1;padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none}
+.disc-box input:focus{border-color:var(--pk)}
+.disc-apply{background:var(--pkd);color:#fff;border:none;padding:8px 16px;border-radius:4px;font-family:var(--sa);font-weight:700;font-size:12px;cursor:pointer}
+.disc-applied{background:#dcfce7;color:#15803d;border:1.5px solid #86efac;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;display:none}
+
+/* CONTACT */
+.contact-btn{background:var(--pkl);border:1.5px solid var(--pk);color:var(--pkd);padding:10px 24px;border-radius:20px;font-family:var(--sa);font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block;margin-top:12px}
+.contact-btn:hover{background:var(--pk);color:#fff}
+
+/* AVAILABILITY CALENDAR */
+.avail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;max-width:500px}
+.avail-day{background:#fff;border:1.5px solid var(--bd);border-radius:6px;padding:10px 8px;text-align:center;font-size:12px}
+.avail-day .day-name{font-weight:700;color:var(--br);margin-bottom:4px;font-size:11px}
+.avail-day .day-status{font-size:10px;padding:2px 6px;border-radius:8px;font-weight:700}
+.day-open{background:#dcfce7;color:#15803d}
+.day-busy{background:#fef9c3;color:#854d0e}
+.day-closed{background:#fee2e2;color:#991b1b}
+
+/* ORDER STATUS */
+.ostatus{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;cursor:pointer}
+.os-new{background:#dbeafe;color:#1e40af}
+.os-ready{background:#fef9c3;color:#854d0e}
+.os-done{background:#dcfce7;color:#15803d}
+
+/* REVIEWS */
+.reviews-sec{max-width:1100px;margin:0 auto;padding:0 24px 44px}
+.reviews-hdr{font-family:var(--se);font-size:1.4rem;color:var(--br);margin-bottom:16px;border-bottom:2px solid var(--bd);padding-bottom:10px}
+.review-form{background:#fff;border:1px solid var(--bd);border-radius:6px;padding:18px;margin-bottom:20px;max-width:500px}
+.stars{display:flex;gap:4px;margin-bottom:10px}
+.star{font-size:24px;cursor:pointer;color:#e8ddd8;transition:color .1s}
+.star.on,.star:hover{color:#f59e0b}
+.review-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.review-card{background:#fff;border:1px solid var(--bd);border-radius:6px;padding:14px}
+.rc-stars{color:#f59e0b;font-size:14px;margin-bottom:6px}
+.rc-text{font-size:13px;color:var(--tx);margin-bottom:6px;line-height:1.5}
+.rc-name{font-size:11px;color:var(--mu);font-weight:700}
+
 /* DOTS MENU */
 .cdots-wrap{display:none;position:absolute;top:7px;right:7px;z-index:10}
 body.owner-on .cdots-wrap{display:block}
@@ -219,6 +262,16 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
   <button class="herobtn" onclick="scrollTo({top:document.querySelector('.sec').offsetTop-60,behavior:'smooth'})">Shop Now</button>
 </div>
 
+<!-- DISCOUNT CODE -->
+<div style="max-width:1100px;margin:12px auto 0;padding:0 24px">
+  <div class="disc-box">
+    <span style="font-size:13px;font-weight:700;color:var(--br)">🎉 Have a discount code?</span>
+    <input type="text" id="discInput" placeholder="Enter code..." onkeydown="if(event.key==='Enter')applyDiscount()"/>
+    <button class="disc-apply" onclick="applyDiscount()">Apply</button>
+  </div>
+  <div class="disc-applied" id="discApplied"></div>
+</div>
+
 <main>
   <div class="srchsec" id="srchSec">
     <div class="sechdr"><h2 id="srchTitle">Results</h2><a onclick="clearSearch()" style="font-size:12px;font-weight:700;color:var(--pkd);cursor:pointer">✕ Clear</a></div>
@@ -230,7 +283,24 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <div class="pgrid" id="pgrid"><p style="color:#bbb;font-size:14px;padding:20px 0">Loading items... 🍪</p></div>
   </div>
 
-
+  <!-- REVIEWS -->
+  <div class="reviews-sec">
+    <div class="reviews-hdr">⭐ Customer Reviews</div>
+    <div class="review-form">
+      <p style="font-size:13px;font-weight:700;color:var(--br);margin-bottom:8px">Leave a review!</p>
+      <div class="stars" id="starRow">
+        <span class="star" onclick="setStar(1)">★</span>
+        <span class="star" onclick="setStar(2)">★</span>
+        <span class="star" onclick="setStar(3)">★</span>
+        <span class="star" onclick="setStar(4)">★</span>
+        <span class="star" onclick="setStar(5)">★</span>
+      </div>
+      <div class="fg" style="margin-bottom:8px"><input type="text" id="revName" placeholder="Your name"/></div>
+      <div class="fg" style="margin-bottom:8px"><textarea id="revText" placeholder="What did you think?" style="min-height:60px;resize:vertical"></textarea></div>
+      <button class="mbtnp" style="width:100%" onclick="submitReview()">Submit Review 💕</button>
+    </div>
+    <div class="review-grid" id="reviewGrid"></div>
+  </div>
 
   <div class="sec" id="about">
     <div class="sechdr"><h2>Ahana's Shop</h2></div>
@@ -240,10 +310,10 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
         <p style="font-size:13px;color:var(--mu);line-height:1.75">I love baking, making friendship bracelets, and finding cool things to share!</p>
         <p style="font-size:13px;color:var(--mu);line-height:1.75;margin-top:10px">Big thank you to my team: <strong style="color:var(--br)">Akira, Shreya, Natalie & Hannah</strong> 💕</p>
         <p style="font-size:13px;color:var(--mu);line-height:1.75;margin-top:10px">All orders are <strong>pickup only</strong> — I'll message you to arrange a time!</p>
+        <a class="contact-btn" href="mailto:ahana.dhruva@gmail.com">💌 Contact Ahana</a>
         <div style="margin-top:16px;background:var(--pkl);border:1px solid var(--bd);border-radius:5px;padding:12px 14px;font-size:12px;color:var(--mu);line-height:1.8">
-          <strong style="color:var(--br)">📅 Hours:</strong><br>
-          Mon–Fri: Busy with school — orders welcome!<br>
-          Sat–Sun: Open for pickups!
+          <strong style="color:var(--br)">📅 Weekly Availability:</strong>
+          <div class="avail-grid" id="availGrid"></div>
         </div>
       </div>
       <div class="aboutimg">🍪</div>
@@ -424,7 +494,7 @@ function parseCSV(text){
     cols.push(c.trim());
     const row={};hdrs.forEach((h,j)=>row[h]=(cols[j]||'').replace(/^"|"$/g,'').trim());
     const amt=parseFloat(row.price)||0;
-    return{id:i+1,name:row.name||'',price:'$'+amt.toFixed(2),amt,cat:row.category||'Baked Goods',desc:row.description||'',ph:row.photo||''};
+    return{id:i+1,name:row.name||'',price:'$'+amt.toFixed(2),amt,cat:row.category||'Baked Goods',desc:row.description||'',ph:row.photo||'',tag:(row.tag||row.badge||'').toLowerCase()};
   }).filter(i=>i.name);
 }
 
@@ -642,10 +712,13 @@ function toS2(){
   const q=parseInt(document.getElementById('oQ').value)||1;
   const pu=document.getElementById('oPU').value||'To be arranged';
   const r=document.getElementById('oR').value;
-  const total='$'+(cur.amt*q).toFixed(2);
+  const base=cur.amt*q;
+  const disc=activeDiscount>0?base*(activeDiscount/100):0;
+  const total='$'+(base-disc).toFixed(2);
   document.getElementById('revBox').innerHTML=`<h4>Order Summary</h4>
     <div class="sr"><span>Item</span><span>${cur.name}</span></div>
     <div class="sr"><span>Quantity</span><span>${q}</span></div>
+    ${activeDiscount>0?`<div class="sr"><span>Discount</span><span style="color:#15803d">-${activeDiscount}% off!</span></div>`:''}
     <div class="sr"><span>Name</span><span>${n}</span></div>
     <div class="sr"><span>Contact</span><span>${c}</span></div>
     <div class="sr"><span>Pickup</span><span>${pu}</span></div>
@@ -656,7 +729,9 @@ function toS2(){
 function rec(method){
   try{
   const q=parseInt(document.getElementById('oQ').value)||1;
-  const total='$'+(cur.amt*q).toFixed(2);
+  const base=cur.amt*q;
+  const disc=activeDiscount>0?base*(activeDiscount/100):0;
+  const total='$'+(base-disc).toFixed(2);
   const o={id:Date.now(),item:cur.name,qty:q,price:total,
     name:document.getElementById('oN').value.trim(),
     contact:document.getElementById('oC').value.trim(),
@@ -689,16 +764,18 @@ function rec(method){
 function renderOrders(){
   const el=document.getElementById('ordersBox');
   if(!orders.length){el.innerHTML='<p style="color:#bbb;font-size:13px">No orders yet!</p>';return;}
-  const bm={'Venmo — Pay at Pickup':'bpp','Cash — Small Orders':'bca','Check — Large/Custom':'bip'};
-  el.innerHTML=`<table class="otbl"><thead><tr><th>Customer</th><th>Item</th><th>Pickup</th><th>Payment</th><th>Time</th><th></th></tr></thead><tbody>
-  ${orders.map((o,i)=>`<tr>
+  const bm={'Venmo — Pay at Pickup':'bpp','Cash — Small Orders':'bca','Check — Large/Custom':'bip','Venmo - Pay at Pickup':'bpp','Cash - Small Orders':'bca','Check - Large or Custom':'bip'};
+  const slabel={'new':'🆕 New','ready':'📦 Ready','done':'✅ Done'};
+  el.innerHTML=`<table class="otbl"><thead><tr><th>Customer</th><th>Item</th><th>Pickup</th><th>Payment</th><th>Status</th><th>Time</th><th></th></tr></thead><tbody>
+  ${orders.map((o,i)=>{const st=o.status||'new';return`<tr>
     <td><strong>${o.name}</strong><br><span style="color:var(--mu)">${o.contact}</span>${o.notes?`<br><em style="font-size:10px">${o.notes}</em>`:''}</td>
     <td>${o.item}<br><strong>${o.price}</strong> x${o.qty||1}</td>
     <td style="font-size:12px">${o.pickup}</td>
     <td><span class="bdg ${bm[o.payment]||'bip'}">${o.payment}</span></td>
+    <td><span class="ostatus os-${st}" onclick="cycleStatus(${i})" title="Click to change">${slabel[st]}</span></td>
     <td style="font-size:10px;color:#aaa">${o.time}</td>
     <td><button class="del-btn" onclick="delOrder(${i})">✕</button></td>
-  </tr>`).join('')}</tbody></table>`;
+  </tr>`;}).join('')}</tbody></table>`;
 }
 function delOrder(i){if(!confirm('Remove?'))return;orders.splice(i,1);localStorage.setItem('cc_orders',JSON.stringify(orders));renderOrders();}
 
@@ -728,12 +805,121 @@ function toggleAP(){
 }
 
 // ════════════════════════════
+// 🎉 DISCOUNT CODES
+// Add your codes here! Format: 'CODE': percent off
+// ════════════════════════════
+const DISCOUNT_CODES = {
+  'AHANA10': 10,
+  'COOKIES20': 20,
+  'FRIEND15': 15,
+  'WELCOME5': 5,
+};
+let activeDiscount = 0;
+
+function applyDiscount(){
+  const code = document.getElementById('discInput').value.trim().toUpperCase();
+  const disc = DISCOUNT_CODES[code];
+  const applied = document.getElementById('discApplied');
+  if(disc){
+    activeDiscount = disc;
+    applied.textContent = `✅ Code "${code}" applied! ${disc}% off your order!`;
+    applied.style.display = 'block';
+    document.getElementById('discInput').value = '';
+  } else {
+    applied.textContent = '❌ Invalid code. Try again!';
+    applied.style.background = '#fee2e2';
+    applied.style.color = '#991b1b';
+    applied.style.border = '1.5px solid #fecaca';
+    applied.style.display = 'block';
+    setTimeout(()=>{applied.style.display='none';applied.style.background='';applied.style.color='';applied.style.border='';},3000);
+  }
+}
+
+// ════════════════════════════
+// ⭐ REVIEWS
+// ════════════════════════════
+let reviews = JSON.parse(localStorage.getItem('cc_reviews')||'[]');
+let selectedStar = 0;
+
+function setStar(n){
+  selectedStar = n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<n));
+}
+function submitReview(){
+  if(!selectedStar){alert('Please pick a star rating!');return;}
+  const name = document.getElementById('revName').value.trim();
+  const text = document.getElementById('revText').value.trim();
+  if(!name||!text){alert('Please fill in your name and review!');return;}
+  reviews.unshift({name,text,stars:selectedStar,date:new Date().toLocaleDateString()});
+  localStorage.setItem('cc_reviews',JSON.stringify(reviews));
+  document.getElementById('revName').value='';
+  document.getElementById('revText').value='';
+  setStar(0);selectedStar=0;
+  renderReviews();
+}
+function renderReviews(){
+  const el = document.getElementById('reviewGrid');
+  if(!reviews.length){el.innerHTML='<p style="color:#bbb;font-size:13px">No reviews yet — be the first! 💕</p>';return;}
+  el.innerHTML = reviews.map(r=>`
+    <div class="review-card">
+      <div class="rc-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+      <div class="rc-text">"${r.text}"</div>
+      <div class="rc-name">— ${r.name} · ${r.date}</div>
+    </div>`).join('');
+}
+
+// ════════════════════════════
+// 📅 AVAILABILITY CALENDAR
+// ════════════════════════════
+function renderAvailCalendar(){
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const status=['busy','busy','busy','busy','busy','open','open'];
+  const label=['School 📚','School 📚','School 📚','School 📚','School 📚','Open! ✅','Open! ✅'];
+  document.getElementById('availGrid').innerHTML = days.map((d,i)=>`
+    <div class="avail-day">
+      <div class="day-name">${d}</div>
+      <div class="day-status day-${status[i]}">${label[i]}</div>
+    </div>`).join('');
+}
+
+// ════════════════════════════
+// 🏆 BEST SELLER + 🆕 NEW BADGES in card
+// Add "new" or "bestseller" column to your Google Sheet!
+// ════════════════════════════
+function card(i){
+  const img=i.ph?`<img src="${i.ph}" alt="${i.name}" loading="lazy" onerror="this.style.display='none'"/>`:'';
+  const fb=!i.ph?(EM[i.cat]||'🛍️'):'';
+  const badge=i.tag==='new'?'<div class="badge-new">🆕 New!</div>':i.tag==='bestseller'?'<div class="badge-best">🏆 Best Seller</div>':'';
+  return`<div class="card" id="card-${i.id}">
+    ${badge}
+    <div class="cdots-wrap"><button class="cdots-btn" onclick="toggleDots(event,${i.id})">⋮</button>
+    <div class="cdots-menu" id="cdm-${i.id}"><button onclick="openEdit(${i.id})">✏️ Edit</button><button onclick="deleteItem(${i.id})">🗑️ Delete</button></div></div>
+    <div class="cimg">${img}${fb}</div>
+    <div class="cbody"><p class="ctag">${i.cat}</p><p class="cname">${i.name}</p><p class="cdesc">${i.desc}</p>
+    <div class="cfoot"><span class="cprice">${i.price}</span><button class="cbuy" onclick="openC(${i.id})">Buy Now</button></div></div>
+  </div>`;
+}
+
+// ════════════════════════════
+// ORDER STATUS TRACKER
+// ════════════════════════════
+function cycleStatus(i){
+  const cycle=['new','ready','done'];
+  const cur=orders[i].status||'new';
+  orders[i].status=cycle[(cycle.indexOf(cur)+1)%cycle.length];
+  localStorage.setItem('cc_orders',JSON.stringify(orders));
+  renderOrders();
+}
+
+// ════════════════════════════
 // INIT
 // ════════════════════════════
 loadItems();
 loadAnnouncements();
 updateBanner();
 updateStatusPill();
+renderReviews();
+renderAvailCalendar();
 </script>
 </body>
 </html>
