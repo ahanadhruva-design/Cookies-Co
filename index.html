@@ -473,7 +473,15 @@ async function loadItems(){
       const annTypeIdx=hdrs.indexOf('announcetype');
       const parsed=parseCSV(text);
       if(parsed.length===0)continue;
-      // Read announcement using proper quote-aware CSV parsing
+      // Read discount code from sheet
+      const discIdx=hdrs.indexOf('discountcode');
+      if(discIdx>-1&&lines.length>1){
+        const cols2=[];let c2='',q2=false;
+        for(const ch of lines[1]){if(ch==='"'){q2=!q2;}else if(ch===','&&!q2){cols2.push(c2.trim());c2='';}else c2+=ch;}
+        cols2.push(c2.trim());
+        const code=(cols2[discIdx]||'').replace(/^"|"$/g,'').trim().toUpperCase();
+        if(code){CURRENT_CODE=code;if(document.getElementById('monthlyCodeDisplay'))document.getElementById('monthlyCodeDisplay').textContent=code;}
+      }
       if(annIdx>-1&&lines.length>1){
         const cols=[];let c='',q=false;
         for(const ch of lines[1]){if(ch==='"'){q=!q;}else if(ch===','&&!q){cols.push(c.trim());c='';}else c+=ch;}
