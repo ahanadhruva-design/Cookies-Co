@@ -850,12 +850,27 @@ function submitReview(){
   const name = document.getElementById('revName').value.trim();
   const text = document.getElementById('revText').value.trim();
   if(!name||!text){alert('Please fill in your name and review!');return;}
-  reviews.unshift({name,text,stars:selectedStar,date:new Date().toLocaleDateString()});
+  const review={name,text,stars:selectedStar,date:new Date().toLocaleDateString()};
+  reviews.unshift(review);
   localStorage.setItem('cc_reviews',JSON.stringify(reviews));
   document.getElementById('revName').value='';
   document.getElementById('revText').value='';
   setStar(0);selectedStar=0;
   renderReviews();
+  // Email review to Ahana
+  emailjs.send(EJS_SVC,'template_lvmx2nm',{
+    item:'⭐ New Review!',
+    qty:'1',
+    price:review.stars+' stars',
+    customer_name:review.name,
+    contact:'N/A',
+    pickup:'N/A',
+    notes:review.text,
+    payment:'Review',
+    time:review.date,
+    message:`New review from ${review.name}: ${'★'.repeat(review.stars)} — "${review.text}"`
+  }).catch(e=>console.log('Email error:',e));
+  alert('Thanks for your review! 💕');
 }
 function renderReviews(){
   const el = document.getElementById('reviewGrid');
