@@ -213,6 +213,16 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <label class="albl">💳 PayPal.me Username</label>
     <input class="ainput" type="text" id="ppUser" placeholder="e.g. AhanaShop" oninput="savePP()" style="max-width:400px"/>
 
+    <!-- Monthly Code -->
+    <div class="atitle">🎉 This Month's Discount Code</div>
+    <div class="abox" style="max-width:400px">
+      <p style="font-size:12px;color:var(--mu);margin-bottom:10px">Share this with customers for $5 off! Changes automatically every month.</p>
+      <div style="background:var(--pkl);border:2px dashed var(--pk);border-radius:6px;padding:12px;text-align:center">
+        <div id="monthlyCodeDisplay" style="font-family:var(--se);font-size:1.4rem;color:var(--br);letter-spacing:2px;font-weight:700"></div>
+        <div style="font-size:11px;color:var(--mu);margin-top:4px">= $5 off any order!</div>
+      </div>
+    </div>
+
     <!-- Announcements -->
     <div class="atitle">📢 Post Announcement</div>
     <div class="infobox">To post an announcement everyone sees, add a row to your <strong>Announcements</strong> tab in Google Sheets!<br>
@@ -713,12 +723,13 @@ function toS2(){
   const pu=document.getElementById('oPU').value||'To be arranged';
   const r=document.getElementById('oR').value;
   const base=cur.amt*q;
-  const disc=activeDiscount>0?base*(activeDiscount/100):0;
-  const total='$'+(base-disc).toFixed(2);
+  const disc=activeDiscount?DISCOUNT_AMOUNT:0;
+  const total='$'+Math.max(0,base-disc).toFixed(2);
   document.getElementById('revBox').innerHTML=`<h4>Order Summary</h4>
     <div class="sr"><span>Item</span><span>${cur.name}</span></div>
     <div class="sr"><span>Quantity</span><span>${q}</span></div>
-    ${activeDiscount>0?`<div class="sr"><span>Discount</span><span style="color:#15803d">-${activeDiscount}% off!</span></div>`:''}
+    <div class="sr"><span>Original Price</span><span>$${base.toFixed(2)}</span></div>
+    ${disc>0?`<div class="sr"><span>🎉 Discount</span><span style="color:#15803d;font-weight:700">-$${disc.toFixed(2)} off!</span></div>`:''}
     <div class="sr"><span>Name</span><span>${n}</span></div>
     <div class="sr"><span>Contact</span><span>${c}</span></div>
     <div class="sr"><span>Pickup</span><span>${pu}</span></div>
@@ -730,8 +741,8 @@ function rec(method){
   try{
   const q=parseInt(document.getElementById('oQ').value)||1;
   const base=cur.amt*q;
-  const disc=activeDiscount>0?base*(activeDiscount/100):0;
-  const total='$'+(base-disc).toFixed(2);
+  const disc=activeDiscount?DISCOUNT_AMOUNT:0;
+  const total='$'+Math.max(0,base-disc).toFixed(2);
   const o={id:Date.now(),item:cur.name,qty:q,price:total,
     name:document.getElementById('oN').value.trim(),
     contact:document.getElementById('oC').value.trim(),
@@ -753,7 +764,21 @@ function rec(method){
     customer_name:o.name,contact:o.contact,
     pickup:o.pickup,notes:o.notes||'None',
     payment:o.payment,time:o.time,
-    message:`New order: ${o.item} x${o.qty} (${o.price}) from ${o.name}`
+    message:[
+      '🍪 NEW ORDER — Cookies & Co.',
+      '─────────────────────────',
+      `Item:     ${o.item}`,
+      `Qty:      ${o.qty}`,
+      `Price:    ${o.price}${disc>0?' ($'+disc.toFixed(2)+' discount applied!)':''}`,
+      '─────────────────────────',
+      `Name:     ${o.name}`,
+      `Contact:  ${o.contact}`,
+      `Pickup:   ${o.pickup}`,
+      `Requests: ${o.notes||'None'}`,
+      `Payment:  ${o.payment}`,
+      '─────────────────────────',
+      `Ordered:  ${o.time}`,
+    ].join('\n')
   }).catch(err=>console.log('Email error:',err));
   }catch(err){alert('Something went wrong: '+err.message);}
 }
@@ -790,6 +815,7 @@ function doLogin(){
     document.getElementById('aBar').classList.add('on');
     document.getElementById('aPanel').classList.add('on');
     document.getElementById('ppUser').value=localStorage.getItem('cc_pp')||'';
+    document.getElementById('monthlyCodeDisplay').textContent=MONTHLY_CODE;
     renderNotices();renderOrders();doFilter(cf,null);
   } else {alert('Wrong password!');}
 }
@@ -805,33 +831,37 @@ function toggleAP(){
 }
 
 // ════════════════════════════
-// 🎉 DISCOUNT CODES
-// Add your codes here! Format: 'CODE': percent off
+// 🎉 MONTHLY DISCOUNT CODE ($5 off!)
+// Auto-generates a new code each month
 // ════════════════════════════
-const DISCOUNT_CODES = {
-  'AHANA10': 10,
-  'COOKIES20': 20,
-  'FRIEND15': 15,
-  'WELCOME5': 5,
-};
-let activeDiscount = 0;
+function getMonthlyCode(){
+  const d=new Date();
+  const months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  return months[d.getMonth()]+String(d.getFullYear()).slice(-2)+'COOKIES';
+}
+const MONTHLY_CODE = getMonthlyCode();
+const DISCOUNT_AMOUNT = 5; // $5 off
+let activeDiscount = false;
 
 function applyDiscount(){
-  const code = document.getElementById('discInput').value.trim().toUpperCase();
-  const disc = DISCOUNT_CODES[code];
-  const applied = document.getElementById('discApplied');
-  if(disc){
-    activeDiscount = disc;
-    applied.textContent = `✅ Code "${code}" applied! ${disc}% off your order!`;
-    applied.style.display = 'block';
-    document.getElementById('discInput').value = '';
+  const code=document.getElementById('discInput').value.trim().toUpperCase();
+  const applied=document.getElementById('discApplied');
+  if(code===MONTHLY_CODE){
+    activeDiscount=true;
+    applied.textContent=`✅ Code applied! $5 off your entire order! 🎉`;
+    applied.style.display='block';
+    applied.style.background='#dcfce7';
+    applied.style.color='#15803d';
+    applied.style.border='1.5px solid #86efac';
+    document.getElementById('discInput').value='';
+    doFilter(cf,null); // Re-render all cards with new prices!
   } else {
-    applied.textContent = '❌ Invalid code. Try again!';
-    applied.style.background = '#fee2e2';
-    applied.style.color = '#991b1b';
-    applied.style.border = '1.5px solid #fecaca';
-    applied.style.display = 'block';
-    setTimeout(()=>{applied.style.display='none';applied.style.background='';applied.style.color='';applied.style.border='';},3000);
+    applied.textContent='❌ Invalid code. Try again!';
+    applied.style.display='block';
+    applied.style.background='#fee2e2';
+    applied.style.color='#991b1b';
+    applied.style.border='1.5px solid #fecaca';
+    setTimeout(()=>{applied.style.display='none';},3000);
   }
 }
 
@@ -905,13 +935,17 @@ function card(i){
   const img=i.ph?`<img src="${i.ph}" alt="${i.name}" loading="lazy" onerror="this.style.display='none'"/>`:'';
   const fb=!i.ph?(EM[i.cat]||'🛍️'):'';
   const badge=i.tag==='new'?'<div class="badge-new">🆕 New!</div>':i.tag==='bestseller'?'<div class="badge-best">🏆 Best Seller</div>':'';
+  const discPrice=activeDiscount?Math.max(0,i.amt-DISCOUNT_AMOUNT).toFixed(2):null;
+  const priceHtml=discPrice
+    ?`<span style="text-decoration:line-through;color:#bbb;font-size:.85rem">${i.price}</span> <span style="color:#15803d;font-weight:900">$${discPrice}</span>`
+    :`<span class="cprice">${i.price}</span>`;
   return`<div class="card" id="card-${i.id}">
     ${badge}
     <div class="cdots-wrap"><button class="cdots-btn" onclick="toggleDots(event,${i.id})">⋮</button>
     <div class="cdots-menu" id="cdm-${i.id}"><button onclick="openEdit(${i.id})">✏️ Edit</button><button onclick="deleteItem(${i.id})">🗑️ Delete</button></div></div>
     <div class="cimg">${img}${fb}</div>
     <div class="cbody"><p class="ctag">${i.cat}</p><p class="cname">${i.name}</p><p class="cdesc">${i.desc}</p>
-    <div class="cfoot"><span class="cprice">${i.price}</span><button class="cbuy" onclick="openC(${i.id})">Buy Now</button></div></div>
+    <div class="cfoot">${priceHtml}<button class="cbuy" onclick="openC(${i.id})">Buy Now</button></div></div>
   </div>`;
 }
 
