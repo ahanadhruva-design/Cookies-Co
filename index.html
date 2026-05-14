@@ -370,10 +370,11 @@ function fmtDT(){return new Date().toLocaleString('en-US',{weekday:'long',year:'
 const PUBLISHED_ID = '2PACX-1vTJ7bNurGMbMN__frGvR3YgLG45SeRm8oFbFzjK8c8aNhvPhY6qqfFNRxb7HNB3wSpT73F_HT3xxRzI';
 
 async function loadItems(){
-  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
+  const ts=Date.now();
+  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0&t=${ts}`;
   const proxies=[
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
-    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(CSV)}`,
   ];
   for(const url of proxies){
@@ -395,7 +396,15 @@ async function loadItems(){
         cols.push(c.trim());
         const msg=(cols[annIdx]||'').replace(/^"|"$/g,'').trim();
         const type=(annTypeIdx>-1?(cols[annTypeIdx]||''):'warn').replace(/^"|"$/g,'').trim()||'warn';
-        if(msg){notices=[{msg,type,expiry:null}];updateBanner();}
+        const expIdx=hdrs.indexOf('announcementexpiry');
+        let expiry=(expIdx>-1?(cols[expIdx]||''):'').replace(/^"|"$/g,'').trim()||null;
+        if(expiry&&expiry.includes('/')){
+          const p=expiry.split('/');
+          const yr=p[2]&&p[2].length===2?'20'+p[2]:p[2]||'2099';
+          expiry=`${yr}-${(p[0]||'01').padStart(2,'0')}-${(p[1]||'01').padStart(2,'0')}`;
+        }
+        const today=new Date().toISOString().slice(0,10);
+        if(msg&&(!expiry||expiry>=today)){notices=[{msg,type,expiry}];updateBanner();}
       }
       items=parsed.filter(i=>!hidden.includes(i.name)).map(i=>overrides[i.id]?{...i,...overrides[i.id]}:i);
       doFilter(cf,null);
