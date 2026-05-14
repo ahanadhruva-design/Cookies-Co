@@ -214,12 +214,16 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <input class="ainput" type="text" id="ppUser" placeholder="e.g. AhanaShop" oninput="savePP()" style="max-width:400px"/>
 
     <!-- Monthly Code -->
-    <div class="atitle">🎉 This Month's Discount Code</div>
+    <div class="atitle">🎉 Discount Code</div>
     <div class="abox" style="max-width:400px">
-      <p style="font-size:12px;color:var(--mu);margin-bottom:10px">Share this with customers for $5 off! Changes automatically every month.</p>
-      <div style="background:var(--pkl);border:2px dashed var(--pk);border-radius:6px;padding:12px;text-align:center">
+      <p style="font-size:12px;color:var(--mu);margin-bottom:10px">Set a custom code for $5 off! Share it with customers any time.</p>
+      <div style="background:var(--pkl);border:2px dashed var(--pk);border-radius:6px;padding:12px;text-align:center;margin-bottom:12px">
         <div id="monthlyCodeDisplay" style="font-family:var(--se);font-size:1.4rem;color:var(--br);letter-spacing:2px;font-weight:700"></div>
         <div style="font-size:11px;color:var(--mu);margin-top:4px">= $5 off any order!</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="customCodeInput" placeholder="Type a new code..." style="flex:1;padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none;text-transform:uppercase"/>
+        <button class="abtn" style="margin:0" onclick="saveCustomCode()">Save</button>
       </div>
     </div>
 
@@ -815,7 +819,7 @@ function doLogin(){
     document.getElementById('aBar').classList.add('on');
     document.getElementById('aPanel').classList.add('on');
     document.getElementById('ppUser').value=localStorage.getItem('cc_pp')||'';
-    document.getElementById('monthlyCodeDisplay').textContent=MONTHLY_CODE;
+    document.getElementById('monthlyCodeDisplay').textContent=CURRENT_CODE;
     renderNotices();renderOrders();doFilter(cf,null);
   } else {alert('Wrong password!');}
 }
@@ -831,22 +835,32 @@ function toggleAP(){
 }
 
 // ════════════════════════════
-// 🎉 MONTHLY DISCOUNT CODE ($5 off!)
-// Auto-generates a new code each month
+// 🎉 DISCOUNT CODE ($5 off!)
+// Owner can set a custom code in the admin panel
 // ════════════════════════════
 function getMonthlyCode(){
   const d=new Date();
   const months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
   return months[d.getMonth()]+String(d.getFullYear()).slice(-2)+'COOKIES';
 }
-const MONTHLY_CODE = getMonthlyCode();
-const DISCOUNT_AMOUNT = 5; // $5 off
+let CURRENT_CODE = localStorage.getItem('cc_disc_code')||getMonthlyCode();
+const DISCOUNT_AMOUNT = 5;
 let activeDiscount = false;
+
+function saveCustomCode(){
+  const input=document.getElementById('customCodeInput').value.trim().toUpperCase();
+  if(!input){alert('Please type a code!');return;}
+  CURRENT_CODE=input;
+  localStorage.setItem('cc_disc_code',CURRENT_CODE);
+  document.getElementById('monthlyCodeDisplay').textContent=CURRENT_CODE;
+  document.getElementById('customCodeInput').value='';
+  alert(`✅ Code saved! Customers can use "${CURRENT_CODE}" for $5 off!`);
+}
 
 function applyDiscount(){
   const code=document.getElementById('discInput').value.trim().toUpperCase();
   const applied=document.getElementById('discApplied');
-  if(code===MONTHLY_CODE){
+  if(code===CURRENT_CODE){
     activeDiscount=true;
     applied.textContent=`✅ Code applied! $5 off your entire order! 🎉`;
     applied.style.display='block';
@@ -854,7 +868,7 @@ function applyDiscount(){
     applied.style.color='#15803d';
     applied.style.border='1.5px solid #86efac';
     document.getElementById('discInput').value='';
-    doFilter(cf,null); // Re-render all cards with new prices!
+    doFilter(cf,null);
   } else {
     applied.textContent='❌ Invalid code. Try again!';
     applied.style.display='block';
