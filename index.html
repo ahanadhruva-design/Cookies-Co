@@ -277,6 +277,7 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <a onclick="doFilter('Baked Goods',this)">Baked Goods</a>
     <a onclick="doFilter('Friendship Bracelets',this)">Bracelets</a>
     <a onclick="doFilter('Toys & Fun Things',this)">Toys</a>
+    <a href="#vip">🌟 VIP</a>
     <a href="#games">🎮 Games</a>
     <a href="#about">Ahana's Shop</a>
     <a onclick="openCart()" id="cartBtn" style="position:relative">🛒 Cart <span id="cartCount" style="display:none;background:#e8a0b4;color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;margin-left:4px;font-weight:900">0</span></a>
@@ -349,6 +350,66 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     </div>
   </div>
 </main>
+
+<!-- VIP + BIRTHDAY + POPULARITY + COTM -->
+<div id="vip" style="max-width:1100px;margin:0 auto;padding:44px 24px">
+  <div class="sechdr"><h2>🌟 VIP & Specials</h2></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px">
+
+    <!-- VIP SIGN UP -->
+    <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:22px">
+      <h3 style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:6px">🌟 Join the VIP List</h3>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:14px;line-height:1.6">VIP customers get early access to new items, exclusive discount codes, and special surprises! 💕</p>
+      <div class="fg" style="margin-bottom:8px"><input type="text" id="vipName" placeholder="Your name"/></div>
+      <div class="fg" style="margin-bottom:10px"><input type="text" id="vipEmail" placeholder="Your email or phone"/></div>
+      <button class="mbtnp" style="width:100%" onclick="joinVIP()">✨ Join VIP List!</button>
+      <div id="vipMsg" style="display:none;margin-top:10px;background:#dcfce7;border:1px solid #86efac;border-radius:5px;padding:10px;font-size:12px;color:#15803d;font-weight:700;text-align:center"></div>
+    </div>
+
+    <!-- BIRTHDAY DEAL -->
+    <div style="background:linear-gradient(135deg,#fdf0f4,#fce4ef);border:1px solid var(--pk);border-radius:8px;padding:22px">
+      <h3 style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:6px">🎂 Birthday Special!</h3>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:14px;line-height:1.6">Is it your birthday month? You get <strong style="color:var(--pkd)">$5 off + a free friendship bracelet</strong> with your order! 🎉</p>
+      <div class="fg" style="margin-bottom:8px"><input type="text" id="bdayName" placeholder="Your name"/></div>
+      <div class="fg" style="margin-bottom:8px">
+        <select id="bdayMonth" style="width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none">
+          <option value="">Select your birth month...</option>
+          <option>January</option><option>February</option><option>March</option><option>April</option>
+          <option>May</option><option>June</option><option>July</option><option>August</option>
+          <option>September</option><option>October</option><option>November</option><option>December</option>
+        </select>
+      </div>
+      <button class="mbtnp" style="width:100%;background:var(--pkd)" onclick="claimBirthday()">🎂 Claim Birthday Deal!</button>
+      <div id="bdayMsg" style="display:none;margin-top:10px;border-radius:5px;padding:10px;font-size:12px;font-weight:700;text-align:center"></div>
+    </div>
+
+  </div>
+
+  <!-- ITEM POPULARITY -->
+  <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:22px;margin-bottom:24px">
+    <h3 style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:14px">📊 Most Popular Items</h3>
+    <div id="popularityChart"></div>
+  </div>
+
+  <!-- CUSTOMER OF THE MONTH -->
+  <div style="background:linear-gradient(135deg,#5c3d2e,#3b2314);border-radius:8px;padding:22px;color:#fff">
+    <h3 style="font-family:var(--se);font-size:1.1rem;color:#e8a0b4;margin-bottom:6px">🏆 Customer of the Month</h3>
+    <p style="font-size:12px;color:rgba(255,255,255,.7);margin-bottom:14px">Ahana picks one amazing customer each month! They get a FREE item and a shoutout! 💕</p>
+    <div id="cotmDisplay" style="background:rgba(255,255,255,.1);border-radius:6px;padding:14px;text-align:center">
+      <div style="font-size:2rem;margin-bottom:6px">👑</div>
+      <div id="cotmName" style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff;margin-bottom:4px">Loading...</div>
+      <div id="cotmReason" style="font-size:12px;color:rgba(255,255,255,.65)"></div>
+    </div>
+    <!-- Owner only: set COTM -->
+    <div id="cotmOwner" style="display:none;margin-top:14px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="text" id="cotmNameInput" placeholder="Customer name..." style="flex:1;padding:8px 12px;border:none;border-radius:4px;font-family:var(--sa);font-size:13px;outline:none"/>
+        <input type="text" id="cotmReasonInput" placeholder="Why they're amazing..." style="flex:2;padding:8px 12px;border:none;border-radius:4px;font-family:var(--sa);font-size:13px;outline:none"/>
+        <button onclick="saveCOTM()" style="background:#e8a0b4;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-family:var(--sa);font-weight:700;font-size:12px;cursor:pointer">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- GAMES SECTION -->
 <div id="games" style="background:var(--pkl);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)">
@@ -833,6 +894,8 @@ function rec(method){
     notes:document.getElementById('oR').value,
     payment:method,time:fmtDT()};
   orders.unshift(o);localStorage.setItem('cc_orders',JSON.stringify(orders));
+  trackPopularity(o.item);
+  renderPopularity();
   // Clear cart after order
   if(isCart){cart=[];curCart=null;updateCartCount();}
   document.getElementById('confirmDetail').innerHTML=
@@ -902,6 +965,7 @@ function doLogin(){
     document.getElementById('ppUser').value=localStorage.getItem('cc_pp')||'';
     document.getElementById('monthlyCodeDisplay').textContent=CURRENT_CODE;
     renderNotices();renderOrders();doFilter(cf,null);
+    showCOTMOwner();
   } else {alert('Wrong password!');}
 }
 function doLogout(){
@@ -1138,6 +1202,113 @@ function checkoutCart(){
 let curCart = null;
 
 // ════════════════════════════
+// 🌟 VIP LIST
+// ════════════════════════════
+function joinVIP(){
+  const name=document.getElementById('vipName').value.trim();
+  const email=document.getElementById('vipEmail').value.trim();
+  if(!name||!email){alert('Please fill in your name and email!');return;}
+  const vips=JSON.parse(localStorage.getItem('cc_vips')||'[]');
+  vips.push({name,email,date:new Date().toLocaleDateString()});
+  localStorage.setItem('cc_vips',JSON.stringify(vips));
+  // Email Ahana
+  emailjs.send(EJS_SVC,EJS_TPL,{
+    item:'🌟 New VIP Member!',qty:'1',price:'N/A',
+    customer_name:name,contact:email,pickup:'N/A',notes:'N/A',payment:'VIP Signup',time:new Date().toLocaleString(),
+    message:`New VIP signup!\nName: ${name}\nContact: ${email}`
+  }).catch(e=>console.log(e));
+  document.getElementById('vipName').value='';
+  document.getElementById('vipEmail').value='';
+  const msg=document.getElementById('vipMsg');
+  msg.textContent=`✅ Welcome to VIP, ${name}! Ahana will reach out soon with your first exclusive code! 💕`;
+  msg.style.display='block';
+}
+
+// ════════════════════════════
+// 🎂 BIRTHDAY DEALS
+// ════════════════════════════
+function claimBirthday(){
+  const name=document.getElementById('bdayName').value.trim();
+  const month=document.getElementById('bdayMonth').value;
+  const msg=document.getElementById('bdayMsg');
+  if(!name||!month){alert('Please fill in your name and birth month!');return;}
+  const currMonth=new Date().toLocaleString('default',{month:'long'});
+  if(month===currMonth){
+    activeDiscount=true;doFilter(cf,null);
+    msg.style.background='#dcfce7';msg.style.color='#15803d';msg.style.border='1px solid #86efac';
+    msg.textContent=`🎉 Happy Birthday ${name}! $5 off applied + free bracelet with your order! Show this to Ahana at pickup! 🎂`;
+    emailjs.send(EJS_SVC,EJS_TPL,{
+      item:'🎂 Birthday Deal Claimed!',qty:'1',price:'$5 off + free bracelet',
+      customer_name:name,contact:'N/A',pickup:'N/A',notes:month+' birthday',payment:'Birthday Deal',time:new Date().toLocaleString(),
+      message:`Birthday deal claimed!\nName: ${name}\nBirth month: ${month}\nGive them $5 off + free bracelet!`
+    }).catch(e=>console.log(e));
+  } else {
+    msg.style.background='#fef9c3';msg.style.color='#854d0e';msg.style.border='1px solid #fde68a';
+    msg.textContent=`Your birthday month is ${month} — come back then for your special deal! 🎂`;
+  }
+  msg.style.display='block';
+  document.getElementById('bdayName').value='';
+}
+
+// ════════════════════════════
+// 📊 ITEM POPULARITY
+// Tracks how many times each item is ordered
+// ════════════════════════════
+function trackPopularity(itemName){
+  const pop=JSON.parse(localStorage.getItem('cc_pop')||'{}');
+  pop[itemName]=(pop[itemName]||0)+1;
+  localStorage.setItem('cc_pop',JSON.stringify(pop));
+}
+function renderPopularity(){
+  const el=document.getElementById('popularityChart');
+  if(!el)return;
+  const pop=JSON.parse(localStorage.getItem('cc_pop')||'{}');
+  const sorted=Object.entries(pop).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if(!sorted.length){el.innerHTML='<p style="color:#bbb;font-size:13px">No orders yet — check back after your first sale! 🍪</p>';return;}
+  const max=sorted[0][1];
+  el.innerHTML=sorted.map(([name,count])=>`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="font-size:12px;font-weight:700;color:var(--br);min-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</div>
+      <div style="flex:1;background:var(--bd);border-radius:10px;height:10px;overflow:hidden">
+        <div style="background:linear-gradient(90deg,#e8a0b4,#c26b8a);height:100%;width:${(count/max)*100}%;border-radius:10px;transition:width .5s"></div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--pkd);min-width:30px">${count}x</div>
+    </div>`).join('');
+}
+
+// ════════════════════════════
+// 🏆 CUSTOMER OF THE MONTH
+// ════════════════════════════
+function loadCOTM(){
+  const cotm=JSON.parse(localStorage.getItem('cc_cotm')||'{}');
+  const nameEl=document.getElementById('cotmName');
+  const reasonEl=document.getElementById('cotmReason');
+  if(cotm.name){
+    if(nameEl)nameEl.textContent=cotm.name+' 👑';
+    if(reasonEl)reasonEl.textContent=cotm.reason||'An amazing Cookies & Co. customer! 💕';
+  } else {
+    if(nameEl)nameEl.textContent='Not set yet!';
+    if(reasonEl)reasonEl.textContent='Check back soon — Ahana picks someone new each month!';
+  }
+}
+function saveCOTM(){
+  const name=document.getElementById('cotmNameInput').value.trim();
+  const reason=document.getElementById('cotmReasonInput').value.trim();
+  if(!name)return;
+  localStorage.setItem('cc_cotm',JSON.stringify({name,reason}));
+  loadCOTM();
+  document.getElementById('cotmNameInput').value='';
+  document.getElementById('cotmReasonInput').value='';
+  alert(`✅ ${name} is now Customer of the Month! 🏆`);
+}
+
+// Show COTM owner panel when logged in
+function showCOTMOwner(){
+  const el=document.getElementById('cotmOwner');
+  if(el)el.style.display='block';
+}
+
+// ════════════════════════════
 // 🍪 COOKIE CLICKER
 // ════════════════════════════
 let clickCount = 0;
@@ -1250,6 +1421,8 @@ updateBanner();
 updateStatusPill();
 renderReviews();
 renderAvailCalendar();
+renderPopularity();
+loadCOTM();
 setTimeout(()=>drawWheel(0),500);
 <!-- GOOGLE CHAT BUTTON -->
 <div style="position:fixed;bottom:24px;right:24px;z-index:9999">
