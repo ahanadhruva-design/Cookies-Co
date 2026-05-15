@@ -90,6 +90,20 @@ nav{background:var(--br)}
 .cprice{font-weight:700;font-size:1rem;color:var(--br)}
 .cbuy{background:var(--br);color:#fff;border:none;border-radius:20px;padding:7px 18px;font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;text-transform:uppercase;font-family:var(--sa)}
 .cbuy:hover{background:var(--pkd)}
+/* CART */
+.cart-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.cart-item:last-child{border-bottom:none}
+.cart-img{width:50px;height:50px;border-radius:4px;background:var(--pkl);display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;flex-shrink:0}
+.cart-img img{width:100%;height:100%;object-fit:cover}
+.cart-info{flex:1}
+.cart-name{font-family:var(--se);font-size:.9rem;color:var(--br);margin-bottom:2px}
+.cart-price{font-size:13px;color:var(--mu)}
+.cart-qty{display:flex;align-items:center;gap:6px}
+.qty-btn{background:var(--cr);border:1px solid var(--bd);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer;color:var(--br)}
+.qty-btn:hover{background:var(--pk);color:#fff;border-color:var(--pk)}
+.qty-num{font-size:13px;font-weight:700;color:var(--br);min-width:16px;text-align:center}
+.cart-total{background:var(--cr);border-radius:6px;padding:12px 14px;margin:14px 0}
+.cart-empty{text-align:center;padding:30px;color:#bbb;font-size:14px}
 
 /* BADGES */
 .badge-new{position:absolute;top:8px;left:8px;background:#22c55e;color:#fff;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.8px;padding:3px 8px;border-radius:10px;z-index:5}
@@ -263,8 +277,8 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <a onclick="doFilter('Baked Goods',this)">Baked Goods</a>
     <a onclick="doFilter('Friendship Bracelets',this)">Bracelets</a>
     <a onclick="doFilter('Toys & Fun Things',this)">Toys</a>
-
     <a href="#about">Ahana's Shop</a>
+    <a onclick="openCart()" id="cartBtn" style="position:relative">🛒 Cart <span id="cartCount" style="display:none;background:#e8a0b4;color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;margin-left:4px;font-weight:900">0</span></a>
     <a class="navr" onclick="showLogin()">🔒 Owner Login</a>
   </div>
 </nav>
@@ -342,6 +356,21 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <div class="ftcopy">© 2025 Ahana's Shop · Pickup orders only · Made with 💕</div>
   </div>
 </footer>
+
+<!-- CART MODAL -->
+<div class="overlay" id="cartModal">
+  <div class="modal" style="max-width:480px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h3>🛒 Your Cart</h3>
+      <button class="mbtns" onclick="document.getElementById('cartModal').classList.remove('on')">✕ Close</button>
+    </div>
+    <div id="cartItems"></div>
+    <div class="macts" style="margin-top:8px">
+      <button class="mbtns" onclick="clearCart()">🗑️ Clear Cart</button>
+      <button class="mbtnp" onclick="checkoutCart()">Checkout →</button>
+    </div>
+  </div>
+</div>
 
 <!-- CHECKOUT MODAL -->
 <div class="overlay" id="coModal">
@@ -643,17 +672,6 @@ function renderNotices(){
 // ════════════════════════════
 // CARDS
 // ════════════════════════════
-function card(i){
-  const img=i.ph?`<img src="${i.ph}" alt="${i.name}" loading="lazy" onerror="this.style.display='none'"/>`:'';
-  const fb=!i.ph?(EM[i.cat]||'🛍️'):'';
-  return`<div class="card" id="card-${i.id}">
-    <div class="cdots-wrap"><button class="cdots-btn" onclick="toggleDots(event,${i.id})">⋮</button>
-    <div class="cdots-menu" id="cdm-${i.id}"><button onclick="openEdit(${i.id})">✏️ Edit</button><button onclick="deleteItem(${i.id})">🗑️ Delete</button></div></div>
-    <div class="cimg">${img}${fb}</div>
-    <div class="cbody"><p class="ctag">${i.cat}</p><p class="cname">${i.name}</p><p class="cdesc">${i.desc}</p>
-    <div class="cfoot"><span class="cprice">${i.price}</span><button class="cbuy" onclick="openC(${i.id})">Buy Now</button></div></div>
-  </div>`;
-}
 function toggleDots(e,id){e.stopPropagation();const m=document.getElementById('cdm-'+id),was=m.classList.contains('open');closeAllDots();if(!was)m.classList.add('open');}
 function closeAllDots(){document.querySelectorAll('.cdots-menu.open').forEach(m=>m.classList.remove('open'));}
 document.addEventListener('click',closeAllDots);
@@ -731,17 +749,24 @@ function showS(n){[1,2,3,4].forEach(x=>document.getElementById('s'+x).style.disp
 function toS2(){
   const n=document.getElementById('oN').value.trim(),c=document.getElementById('oC').value.trim();
   if(!n||!c){alert('Please fill in your name and contact info!');return;}
-  const q=parseInt(document.getElementById('oQ').value)||1;
   const pu=document.getElementById('oPU').value||'To be arranged';
   const r=document.getElementById('oR').value;
-  const base=cur.amt*q;
-  const disc=activeDiscount?DISCOUNT_AMOUNT:0;
-  const total='$'+Math.max(0,base-disc).toFixed(2);
+  const isCart = curCart && curCart.length > 0;
+  const disc = activeDiscount ? DISCOUNT_AMOUNT : 0;
+  let itemList, subtotal;
+  if(isCart){
+    subtotal = curCart.reduce((s,c)=>s+(c.amt*c.qty),0);
+    itemList = curCart.map(c=>`${c.name} x${c.qty} ($${(c.amt*c.qty).toFixed(2)})`).join('\n');
+  } else {
+    const q=parseInt(document.getElementById('oQ').value)||1;
+    subtotal = cur.amt*q;
+    itemList = `${cur.name} x${q}`;
+  }
+  const total='$'+Math.max(0,subtotal-disc).toFixed(2);
   document.getElementById('revBox').innerHTML=`<h4>Order Summary</h4>
-    <div class="sr"><span>Item</span><span>${cur.name}</span></div>
-    <div class="sr"><span>Quantity</span><span>${q}</span></div>
-    <div class="sr"><span>Original Price</span><span>$${base.toFixed(2)}</span></div>
-    ${disc>0?`<div class="sr"><span>🎉 Discount</span><span style="color:#15803d;font-weight:700">-$${disc.toFixed(2)} off!</span></div>`:''}
+    <div class="sr" style="flex-direction:column;align-items:flex-start;gap:3px"><span style="font-weight:700;color:var(--br)">Items:</span><span style="font-size:12px;line-height:1.8;white-space:pre-line">${itemList}</span></div>
+    <div class="sr"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+    ${disc>0?`<div class="sr"><span>🎉 Discount</span><span style="color:#15803d;font-weight:700">-$${disc.toFixed(2)}</span></div>`:''}
     <div class="sr"><span>Name</span><span>${n}</span></div>
     <div class="sr"><span>Contact</span><span>${c}</span></div>
     <div class="sr"><span>Pickup</span><span>${pu}</span></div>
@@ -751,17 +776,29 @@ function toS2(){
 }
 function rec(method){
   try{
-  const q=parseInt(document.getElementById('oQ').value)||1;
-  const base=cur.amt*q;
-  const disc=activeDiscount?DISCOUNT_AMOUNT:0;
-  const total='$'+Math.max(0,base-disc).toFixed(2);
-  const o={id:Date.now(),item:cur.name,qty:q,price:total,
+  const isCart = curCart && curCart.length > 0;
+  const disc = activeDiscount ? DISCOUNT_AMOUNT : 0;
+  let itemName, qty, subtotal;
+  if(isCart){
+    subtotal = curCart.reduce((s,c)=>s+(c.amt*c.qty),0);
+    itemName = curCart.map(c=>`${c.name} x${c.qty}`).join(', ');
+    qty = curCart.reduce((s,c)=>s+c.qty,0);
+  } else {
+    const q=parseInt(document.getElementById('oQ').value)||1;
+    subtotal = cur.amt*q;
+    itemName = cur.name;
+    qty = q;
+  }
+  const total='$'+Math.max(0,subtotal-disc).toFixed(2);
+  const o={id:Date.now(),item:itemName,qty:qty,price:total,
     name:document.getElementById('oN').value.trim(),
     contact:document.getElementById('oC').value.trim(),
     pickup:document.getElementById('oPU').value||'TBD',
     notes:document.getElementById('oR').value,
     payment:method,time:fmtDT()};
   orders.unshift(o);localStorage.setItem('cc_orders',JSON.stringify(orders));
+  // Clear cart after order
+  if(isCart){cart=[];curCart=null;updateCartCount();}
   document.getElementById('confirmDetail').innerHTML=
     `<strong>Item:</strong> ${o.item} x${o.qty} (${o.price})<br>
      <strong>Name:</strong> ${o.name}<br>
@@ -967,7 +1004,7 @@ function card(i){
     <div class="cdots-menu" id="cdm-${i.id}"><button onclick="openEdit(${i.id})">✏️ Edit</button><button onclick="deleteItem(${i.id})">🗑️ Delete</button></div></div>
     <div class="cimg">${img}${fb}</div>
     <div class="cbody"><p class="ctag">${i.cat}</p><p class="cname">${i.name}</p><p class="cdesc">${i.desc}</p>
-    <div class="cfoot">${priceHtml}<button class="cbuy" onclick="openC(${i.id})">Buy Now</button></div></div>
+    <div class="cfoot">${priceHtml}<button class="cbuy" onclick="addToCart(${i.id})">🛒 Add</button></div></div>
   </div>`;
 }
 
@@ -983,6 +1020,88 @@ function cycleStatus(i){
 }
 
 // ════════════════════════════
+// 🛒 SHOPPING CART
+// ════════════════════════════
+let cart = [];
+
+function addToCart(id){
+  const item = items.find(i=>i.id===id);
+  if(!item) return;
+  const existing = cart.find(c=>c.id===id);
+  if(existing){existing.qty++;}
+  else{cart.push({...item, qty:1});}
+  updateCartCount();
+  // Quick flash feedback
+  const btn = document.querySelector(`#card-${id} .cbuy`);
+  if(btn){const orig=btn.textContent;btn.textContent='✅ Added!';btn.style.background='#22c55e';setTimeout(()=>{btn.textContent=orig;btn.style.background='';},1000);}
+}
+
+function updateCartCount(){
+  const total = cart.reduce((s,c)=>s+c.qty,0);
+  const el = document.getElementById('cartCount');
+  if(el){el.textContent=total;el.style.display=total>0?'inline-flex':'none';}
+}
+
+function openCart(){
+  renderCart();
+  document.getElementById('cartModal').classList.add('on');
+}
+
+function renderCart(){
+  const el = document.getElementById('cartItems');
+  if(!cart.length){el.innerHTML='<div class="cart-empty">Your cart is empty! 🍪<br>Add some items to get started.</div>';return;}
+  const disc = activeDiscount ? DISCOUNT_AMOUNT : 0;
+  let subtotal = cart.reduce((s,c)=>s+(c.amt*c.qty),0);
+  let total = Math.max(0, subtotal - disc);
+  el.innerHTML = cart.map((c,i)=>`
+    <div class="cart-item">
+      <div class="cart-img">${c.ph?`<img src="${c.ph}" onerror="this.style.display='none'"/>`:(EM[c.cat]||'🛍️')}</div>
+      <div class="cart-info">
+        <div class="cart-name">${c.name}</div>
+        <div class="cart-price">${c.price} each</div>
+      </div>
+      <div class="cart-qty">
+        <div class="qty-btn" onclick="changeQty(${i},-1)">−</div>
+        <div class="qty-num">${c.qty}</div>
+        <div class="qty-btn" onclick="changeQty(${i},1)">+</div>
+      </div>
+    </div>`).join('')+`
+    <div class="cart-total">
+      <div class="sr"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+      ${disc>0?`<div class="sr"><span>🎉 Discount</span><span style="color:#15803d">-$${disc.toFixed(2)}</span></div>`:''}
+      <div class="sr tot"><span>Total</span><span>$${total.toFixed(2)}</span></div>
+    </div>`;
+}
+
+function changeQty(idx, delta){
+  cart[idx].qty += delta;
+  if(cart[idx].qty <= 0) cart.splice(idx, 1);
+  updateCartCount();
+  renderCart();
+}
+
+function clearCart(){
+  if(!confirm('Clear your cart?')) return;
+  cart = [];
+  updateCartCount();
+  renderCart();
+}
+
+function checkoutCart(){
+  if(!cart.length){alert('Your cart is empty!');return;}
+  document.getElementById('cartModal').classList.remove('on');
+  // Set up multi-item checkout
+  curCart = [...cart];
+  document.getElementById('s1lbl').textContent = `${cart.length} item${cart.length>1?'s':''} — see review for details`;
+  ['oN','oC','oPU','oR'].forEach(x=>document.getElementById(x).value='');
+  document.getElementById('oQ').value='1';
+  document.getElementById('shopNote').innerHTML='';
+  showS(1);
+  document.getElementById('coModal').classList.add('on');
+}
+let curCart = null;
+
+// ════════════════════════════
 // INIT
 // ════════════════════════════
 loadItems();
@@ -991,6 +1110,13 @@ updateBanner();
 updateStatusPill();
 renderReviews();
 renderAvailCalendar();
-</script>
+<!-- GOOGLE CHAT BUTTON -->
+<div style="position:fixed;bottom:24px;right:24px;z-index:500">
+  <a href="https://chat.google.com/?authuser=0" target="_blank" 
+     style="display:flex;align-items:center;gap:8px;background:#5c3d2e;color:#fff;padding:12px 20px;border-radius:30px;text-decoration:none;font-family:'Lato',sans-serif;font-weight:700;font-size:13px;box-shadow:0 4px 16px rgba(92,61,46,.3);transition:background .15s"
+     onmouseover="this.style.background='#c26b8a'" onmouseout="this.style.background='#5c3d2e'">
+    💬 Chat with Ahana
+  </a>
+</div>
 </body>
 </html>
