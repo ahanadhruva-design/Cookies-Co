@@ -346,8 +346,8 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
 
       <!-- Popularity Chart -->
       <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:20px;margin-bottom:24px">
-        <h3 style="font-family:var(--se);font-size:1.05rem;color:var(--br);margin-bottom:14px">📊 Most Popular Items</h3>
-        <div id="popChart"><p style="color:#bbb;font-size:13px">Add sales to your Sales tab in Google Sheets to see the chart! 🍪</p></div>
+        <h3 style="font-family:var(--se);font-size:1.05rem;color:var(--br);margin-bottom:10px">📊 Most Popular Items</h3>
+        <p style="font-size:12px;color:var(--mu)">Coming soon! 🍪</p>
       </div>
 
       <!-- Customer of the Month -->
@@ -688,7 +688,7 @@ function renderGrid() {
   const fl = cf === 'all' ? items : items.filter(i => i.cat.toLowerCase() === cf.toLowerCase());
   document.getElementById('secTitle').textContent = cf === 'all' ? 'All Items' : cf;
   document.getElementById('pgrid').innerHTML = fl.length ? fl.map(makeCard).join('') : '<p style="color:#bbb;font-size:14px;padding:20px 0">No items in this category!</p>';
-  renderPopChart();
+
 }
 
 function doFilter(c, el) {
@@ -1291,8 +1291,8 @@ updateStatus();
 renderReviews();
 renderAvail();
 loadCOTM();
-localStorage.removeItem('cc_pop');
-renderPopChart();
+
+//renderPopChart();
 setTimeout(()=>drawWheel(0), 300);
 </script>
 </body>
