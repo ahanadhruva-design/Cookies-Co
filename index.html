@@ -665,10 +665,40 @@ function parseCSV(lines, hdrs) {
 // ═══════════════════════════════════════
 // CARDS & GRID
 // ═══════════════════════════════════════
+let mostPopularItem = ''; // set after loading Sales sheet
+
+async function loadMostPopular() {
+  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=1876372372`;
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
+  ];
+  for (const url of proxies) {
+    try {
+      const res = await fetch(url,{cache:'no-store'});
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (!text||text.length<5) continue;
+      const lines = text.trim().split('\n').slice(1);
+      const pop = {};
+      lines.forEach(line => {
+        const item = parseLine(line)[0]||'';
+        if (item.trim()) pop[item.trim()] = (pop[item.trim()]||0)+1;
+      });
+      const sorted = Object.entries(pop).sort((a,b)=>b[1]-a[1]);
+      if (sorted.length) { mostPopularItem = sorted[0][0]; renderGrid(); }
+      return;
+    } catch(e) { continue; }
+  }
+}
+
 function makeCard(i) {
   const img = i.ph ? `<img src="${i.ph}" alt="${i.name}" loading="lazy" onerror="this.style.display='none'"/>` : '';
   const fb = !i.ph ? (EM[i.cat]||'🛍️') : '';
-  const badge = i.tag==='new' ? '<div class="badge-new">🆕 New!</div>' : i.tag==='bestseller' ? '<div class="badge-best">🏆 Best Seller</div>' : '';
+  const isPopular = mostPopularItem && i.name === mostPopularItem;
+  const badge = isPopular ? '<div class="badge-best">🔥 Most Popular</div>' :
+                i.tag==='new' ? '<div class="badge-new">🆕 New!</div>' :
+                i.tag==='bestseller' ? '<div class="badge-best">🏆 Best Seller</div>' : '';
   const discAmt = activeDiscount ? Math.max(0, i.amt - DISC_AMT) : null;
   const priceHtml = discAmt !== null
     ? `<span style="text-decoration:line-through;color:#bbb;font-size:.85rem">${i.price}</span> <span style="color:#15803d;font-weight:900">$${discAmt.toFixed(2)}</span>`
@@ -1268,6 +1298,7 @@ function togglePanel() {
 // INIT
 // ═══════════════════════════════════════
 loadItems();
+loadMostPopular();
 updateStatus();
 renderReviews();
 renderAvail();
