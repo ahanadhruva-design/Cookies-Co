@@ -969,7 +969,7 @@ function submitReview() {
 async function renderReviews() {
   const el = document.getElementById('reviewGrid'); if (!el) return;
   el.innerHTML='<p style="color:#bbb;font-size:13px">Loading reviews... 🍪</p>';
-  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Reviews`;
+  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Reviws`;
   const proxies = [
     `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
     `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
