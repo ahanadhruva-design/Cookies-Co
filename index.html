@@ -360,6 +360,26 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
   </div>
 
   <!-- REVIEWS -->
+  <!-- REVIEWS -->
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px 44px">
+    <div class="sechdr" style="border-bottom:2px solid var(--bd);padding-bottom:10px;margin-bottom:20px">
+      <h2 style="font-family:var(--se);font-size:1.5rem;color:var(--br)">⭐ Customer Reviews</h2>
+    </div>
+    <div style="background:#fff;border:1px solid var(--bd);border-radius:6px;padding:18px;margin-bottom:20px;max-width:500px">
+      <p style="font-size:13px;font-weight:700;color:var(--br);margin-bottom:8px">Leave a review!</p>
+      <div class="stars" id="starRow">
+        <span class="star" onclick="setStar(1)">★</span>
+        <span class="star" onclick="setStar(2)">★</span>
+        <span class="star" onclick="setStar(3)">★</span>
+        <span class="star" onclick="setStar(4)">★</span>
+        <span class="star" onclick="setStar(5)">★</span>
+      </div>
+      <div class="fg" style="margin-bottom:8px"><input type="text" id="revName" placeholder="Your name"/></div>
+      <div class="fg" style="margin-bottom:10px"><textarea id="revText" placeholder="What did you think?" style="min-height:60px"></textarea></div>
+      <button class="mbtnp" style="width:100%" onclick="submitReview()">Submit Review 💕</button>
+    </div>
+    <div class="review-grid" id="reviewGrid"><p style="color:#bbb;font-size:13px">No reviews yet — be the first! 💕</p></div>
+  </div>
 
   <!-- GAMES -->
   <div class="games-sec" id="games">
@@ -1248,10 +1268,9 @@ function togglePanel() {
 // ═══════════════════════════════════════
 loadItems();
 updateStatus();
-
+renderReviews();
 renderAvail();
 loadCOTM();
-
 setTimeout(()=>drawWheel(0), 300);
 </script>
 </body>
