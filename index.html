@@ -347,7 +347,7 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
       <!-- Popularity Chart -->
       <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:20px;margin-bottom:24px">
         <h3 style="font-family:var(--se);font-size:1.05rem;color:var(--br);margin-bottom:14px">📊 Most Popular Items</h3>
-        <div id="popChart"><p style="color:#bbb;font-size:13px">Order something to see the popularity chart!</p></div>
+        <div id="popChart"><p style="color:#bbb;font-size:13px">Add sales to your Sales tab in Google Sheets to see the chart! 🍪</p></div>
       </div>
 
       <!-- Customer of the Month -->
@@ -867,8 +867,6 @@ function rec(method) {
     };
     orders.unshift(o);
     localStorage.setItem('cc_orders', JSON.stringify(orders));
-    // Track popularity
-    cart.forEach(x => trackPop(x.name, x.qty));
     document.getElementById('confirmDetail').innerHTML = `
       <strong>Items:</strong> ${o.items}<br>
       <strong>Total:</strong> ${o.total}${disc>0?' (incl. $'+disc.toFixed(2)+' discount)':''}<br>
@@ -1293,7 +1291,7 @@ updateStatus();
 renderReviews();
 renderAvail();
 loadCOTM();
-localStorage.removeItem('cc_pop'); // Only use sheet data for popularity
+localStorage.removeItem('cc_pop');
 renderPopChart();
 setTimeout(()=>drawWheel(0), 300);
 </script>
