@@ -601,7 +601,7 @@ async function loadItems() {
       const annIdx = hdrs.indexOf('announcement');
       const annTypeIdx = hdrs.indexOf('announcetype');
       const discIdx = hdrs.indexOf('discountcode');
-      // Read announcement & discount code from row 2
+      // Read announcement, discount code, and COTM from row 2
       if (lines.length > 1) {
         const cols = parseLine(lines[1]);
         if (annIdx > -1) {
@@ -612,6 +612,12 @@ async function loadItems() {
         if (discIdx > -1 && cols[discIdx]) {
           const code = cols[discIdx].trim().toUpperCase();
           if (code) { currentCode = code; localStorage.setItem('cc_code', code); }
+        }
+        // Read COTM from columns J (index 9) and K (index 10)
+        const cotmNameIdx = hdrs.indexOf('cotmname');
+        const cotmReasonIdx = hdrs.indexOf('cotmreason');
+        if (cotmNameIdx > -1 && cols[cotmNameIdx]) {
+          setCOTMFromSheet(cols[cotmNameIdx].trim(), cotmReasonIdx>-1?cols[cotmReasonIdx].trim():'');
         }
       }
       const parsed = parseCSV(lines, hdrs);
@@ -898,8 +904,7 @@ function trackPop(name, qty=1) {
 
 async function renderPopChart() {
   const el = document.getElementById('popChart'); if (!el) return;
-  el.innerHTML='<p style="color:#bbb;font-size:13px">Loading popularity... 🍪</p>';
-  // Try to load from Sales sheet tab (global)
+  el.innerHTML='<p style="color:#bbb;font-size:13px">Loading... 🍪</p>';
   const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Sales`;
   const proxies = [
     `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
@@ -912,7 +917,7 @@ async function renderPopChart() {
       if (!res.ok) continue;
       const text = await res.text();
       if (!text||text.length<5) continue;
-      const lines = text.trim().split('\n').slice(1); // skip header
+      const lines = text.trim().split('\n').slice(1);
       lines.forEach(line => {
         const item = line.split(',')[0].replace(/^"|"$/g,'').trim();
         if (item) pop[item] = (pop[item]||0)+1;
@@ -920,11 +925,11 @@ async function renderPopChart() {
       break;
     } catch(e) { continue; }
   }
-  // Merge with local data
-  const local = JSON.parse(localStorage.getItem('cc_pop')||'{}');
-  Object.entries(local).forEach(([k,v]) => pop[k]=(pop[k]||0)+v);
-  const sorted = Object.entries(pop).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  if (!sorted.length) { el.innerHTML='<p style="color:#bbb;font-size:13px">No orders yet! 🍪</p>'; return; }
+  // Only show items that exist in the current sheet
+  const validNames = items.map(i => i.name);
+  const filtered = Object.entries(pop).filter(([name]) => validNames.includes(name));
+  const sorted = filtered.sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if (!sorted.length) { el.innerHTML='<p style="color:#bbb;font-size:13px">No orders yet! Add sales to your Sales tab to see the chart 🍪</p>'; return; }
   const max = sorted[0][1];
   el.innerHTML = sorted.map(([name,count]) => `<div class="pop-bar">
     <div class="pop-label">${name}</div>
@@ -1066,11 +1071,18 @@ function claimBirthday() {
 // CUSTOMER OF THE MONTH
 // ═══════════════════════════════════════
 function loadCOTM() {
+  // Read from sheet data if available (set during loadItems)
   const cotm = JSON.parse(localStorage.getItem('cc_cotm')||'{}');
   if (cotm.name) {
     document.getElementById('cotmName').textContent = cotm.name+' 👑';
-    document.getElementById('cotmReason').textContent = cotm.reason||'An amazing Cookies & Co. customer! 💕';
+    document.getElementById('cotmReason').textContent = cotm.reason||'An amazing customer! 💕';
   }
+}
+function setCOTMFromSheet(name, reason) {
+  if (!name) return;
+  localStorage.setItem('cc_cotm', JSON.stringify({name, reason}));
+  document.getElementById('cotmName').textContent = name+' 👑';
+  document.getElementById('cotmReason').textContent = reason||'An amazing customer! 💕';
 }
 function saveCOTM() {
   const name = document.getElementById('cotmNameIn').value.trim();
