@@ -344,11 +344,7 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
         </div>
       </div>
 
-      <!-- Popularity Chart -->
-      <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:20px;margin-bottom:24px">
-        <h3 style="font-family:var(--se);font-size:1.05rem;color:var(--br);margin-bottom:14px">📊 Most Popular Items</h3>
-        <div id="popChart"><p style="color:#bbb;font-size:13px">Loading... 🍪</p></div>
-      </div>
+
 
       <!-- Customer of the Month -->
       <div style="background:linear-gradient(135deg,#5c3d2e,#3b2314);border-radius:8px;padding:20px;color:#fff">
@@ -543,7 +539,6 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
 // ═══════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════
-localStorage.removeItem('cc_pop'); // Clear old fake popularity data
 emailjs.init('ctB4TQSDQCbFvQBJd');
 const PW = 'friends4ever';
 const SHEET_ID = '1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o';
@@ -890,18 +885,6 @@ function rec(method) {
 }
 
 // ═══════════════════════════════════════
-// POPULARITY
-// ═══════════════════════════════════════
-function trackPop(name, qty=1) {
-  // Save locally too as backup
-  const pop = JSON.parse(localStorage.getItem('cc_pop')||'{}');
-  pop[name] = (pop[name]||0) + qty;
-  localStorage.setItem('cc_pop', JSON.stringify(pop));
-  // Write to Google Sheet via email notification (Ahana manually adds to sheet)
-  // Global popularity is loaded from the Sales sheet tab
-}
-
-
 // ═══════════════════════════════════════
 // DISCOUNT
 // ═══════════════════════════════════════
@@ -1014,41 +997,6 @@ async function renderReviews() {
     <div class="rc-text">"${r.text}"</div>
     <div class="rc-name">— ${r.name}${r.date?' · '+r.date:''}</div>
   </div>`;}).join('');
-}
-
-// ═══════════════════════════════════════
-// 📊 POPULARITY (reads from Sales sheet only)
-// ═══════════════════════════════════════
-async function renderPopChart() {
-  const el = document.getElementById('popChart'); if (!el) return;
-  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Sales`;
-  const proxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
-    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
-  ];
-  let pop = {};
-  for (const url of proxies) {
-    try {
-      const res = await fetch(url,{cache:'no-store'});
-      if (!res.ok) continue;
-      const text = await res.text();
-      if (!text||text.length<5) continue;
-      const lines = text.trim().split('\n').slice(1);
-      lines.forEach(line => {
-        const item = parseLine(line)[0]||'';
-        if (item.trim()) pop[item.trim()] = (pop[item.trim()]||0)+1;
-      });
-      break;
-    } catch(e) { continue; }
-  }
-  const sorted = Object.entries(pop).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  if (!sorted.length) { el.innerHTML='<p style="color:#bbb;font-size:13px">Add rows to your Sales tab to see the chart! 🍪</p>'; return; }
-  const max = sorted[0][1];
-  el.innerHTML = sorted.map(([name,count]) => `<div class="pop-bar">
-    <div class="pop-label">${name}</div>
-    <div class="pop-track"><div class="pop-fill" style="width:${(count/max)*100}%"></div></div>
-    <div class="pop-val">${count}x</div>
-  </div>`).join('');
 }
 
 // ═══════════════════════════════════════
@@ -1321,7 +1269,6 @@ renderReviews();
 renderAvail();
 loadCOTM();
 
-renderPopChart();
 setTimeout(()=>drawWheel(0), 300);
 </script>
 </body>
