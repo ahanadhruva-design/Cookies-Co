@@ -998,27 +998,53 @@ function submitReview() {
   const name = document.getElementById('revName').value.trim();
   const text = document.getElementById('revText').value.trim();
   if (!name||!text) { alert('Please fill in your name and review!'); return; }
-  reviews.unshift({name,text,stars:selectedStar,date:new Date().toLocaleDateString()});
-  localStorage.setItem('cc_reviews', JSON.stringify(reviews));
+  // Email Ahana with the review so she can add it to the sheet
+  emailjs.send(EJS_SVC, EJS_TPL, {
+    item:'⭐ New Review — Add to Sheet!',
+    qty: selectedStar+' stars',
+    price:'N/A',
+    customer_name: name,
+    contact:'N/A',
+    pickup:'N/A',
+    notes: text,
+    payment:'Review',
+    time: new Date().toLocaleDateString(),
+    message:`NEW REVIEW — Add to your Reviews sheet tab!\n\nName: ${name}\nStars: ${'★'.repeat(selectedStar)}\nReview: "${text}"\nDate: ${new Date().toLocaleDateString()}\n\nGo to your Google Sheet → Reviews tab and add this row!`
+  }).catch(e=>console.log(e));
   document.getElementById('revName').value='';
   document.getElementById('revText').value='';
   setStar(0); selectedStar=0;
-  renderReviews();
-  emailjs.send(EJS_SVC, EJS_TPL, {
-    item:'⭐ New Review', qty:'1', price:selectedStar+' stars',
-    customer_name:name, contact:'N/A', pickup:'N/A', notes:text,
-    payment:'Review', time:new Date().toLocaleString(),
-    message:`New review from ${name}: ${'★'.repeat(reviews[0].stars)} — "${text}"`
-  }).catch(e=>console.log(e));
-  alert('Thanks for your review! 💕');
+  alert('Thanks for your review! 💕 Ahana will post it soon!');
 }
-function renderReviews() {
-  const el = document.getElementById('reviewGrid');
+
+async function renderReviews() {
+  const el = document.getElementById('reviewGrid'); if (!el) return;
+  el.innerHTML='<p style="color:#bbb;font-size:13px">Loading reviews... 🍪</p>';
+  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Reviews`;
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
+  ];
+  let reviews = [];
+  for (const url of proxies) {
+    try {
+      const res = await fetch(url,{cache:'no-store'});
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (!text||text.length<5) continue;
+      const lines = text.trim().split('\n').slice(1);
+      reviews = lines.map(line => {
+        const cols = parseLine(line);
+        return {name:(cols[0]||'').trim(), stars:parseInt(cols[1])||5, text:(cols[2]||'').trim(), date:(cols[3]||'').trim()};
+      }).filter(r => r.name && r.text);
+      break;
+    } catch(e) { continue; }
+  }
   if (!reviews.length) { el.innerHTML='<p style="color:#bbb;font-size:13px">No reviews yet — be the first! 💕</p>'; return; }
   el.innerHTML = reviews.map(r=>`<div class="review-card">
     <div class="rc-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
     <div class="rc-text">"${r.text}"</div>
-    <div class="rc-name">— ${r.name} · ${r.date}</div>
+    <div class="rc-name">— ${r.name}${r.date?' · '+r.date:''}</div>
   </div>`).join('');
 }
 
