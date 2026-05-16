@@ -888,15 +888,43 @@ function rec(method) {
 // POPULARITY
 // ═══════════════════════════════════════
 function trackPop(name, qty=1) {
+  // Save locally too as backup
   const pop = JSON.parse(localStorage.getItem('cc_pop')||'{}');
   pop[name] = (pop[name]||0) + qty;
   localStorage.setItem('cc_pop', JSON.stringify(pop));
+  // Write to Google Sheet via email notification (Ahana manually adds to sheet)
+  // Global popularity is loaded from the Sales sheet tab
 }
-function renderPopChart() {
+
+async function renderPopChart() {
   const el = document.getElementById('popChart'); if (!el) return;
-  const pop = JSON.parse(localStorage.getItem('cc_pop')||'{}');
+  el.innerHTML='<p style="color:#bbb;font-size:13px">Loading popularity... 🍪</p>';
+  // Try to load from Sales sheet tab (global)
+  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=Sales`;
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
+  ];
+  let pop = {};
+  for (const url of proxies) {
+    try {
+      const res = await fetch(url,{cache:'no-store'});
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (!text||text.length<5) continue;
+      const lines = text.trim().split('\n').slice(1); // skip header
+      lines.forEach(line => {
+        const item = line.split(',')[0].replace(/^"|"$/g,'').trim();
+        if (item) pop[item] = (pop[item]||0)+1;
+      });
+      break;
+    } catch(e) { continue; }
+  }
+  // Merge with local data
+  const local = JSON.parse(localStorage.getItem('cc_pop')||'{}');
+  Object.entries(local).forEach(([k,v]) => pop[k]=(pop[k]||0)+v);
   const sorted = Object.entries(pop).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  if (!sorted.length) { el.innerHTML='<p style="color:#bbb;font-size:13px">Place an order to see popularity! 🍪</p>'; return; }
+  if (!sorted.length) { el.innerHTML='<p style="color:#bbb;font-size:13px">No orders yet! 🍪</p>'; return; }
   const max = sorted[0][1];
   el.innerHTML = sorted.map(([name,count]) => `<div class="pop-bar">
     <div class="pop-label">${name}</div>
@@ -1072,6 +1100,12 @@ function clickCookie() {
       reward.style.cssText='display:block;background:#dcfce7;color:#15803d;border:1px solid #86efac;padding:10px;border-radius:6px';
       reward.innerHTML=`🎉 You did it! Use code <strong>${currentCode}</strong> for $5 off!`;
     }
+    emailjs.send(EJS_SVC, EJS_TPL, {
+      item:'🎮 Cookie Clicker Win!', qty:'1', price:'$5 off code',
+      customer_name:'A customer', contact:'N/A', pickup:'N/A', notes:'N/A',
+      payment:'Cookie Clicker', time:new Date().toLocaleString(),
+      message:`Someone won the Cookie Clicker game!\nThey got code: ${currentCode} for $5 off!\nTime: ${new Date().toLocaleString()}`
+    }).catch(e=>console.log(e));
     clickCount=0;
     if (bar) bar.style.width='0%';
     if (num) num.textContent='0';
@@ -1144,12 +1178,15 @@ function spinWheel() {
         activeDiscount=true;renderGrid();
         res.style.cssText='display:block;background:#dcfce7;color:#15803d;padding:10px;border-radius:6px';
         res.innerHTML=`🎉 You won $5 off! Code <strong>${currentCode}</strong> applied automatically!`;
+        emailjs.send(EJS_SVC,EJS_TPL,{item:'🎯 Spin the Wheel Win — $5 Off!',qty:'1',price:'$5 off',customer_name:'A customer',contact:'N/A',pickup:'N/A',notes:'N/A',payment:'Spin the Wheel',time:new Date().toLocaleString(),message:`Someone spun the wheel and won $5 off!\nCode ${currentCode} was applied.\nTime: ${new Date().toLocaleString()}`}).catch(e=>console.log(e));
       } else if(prize.type==='cookie'){
         res.style.cssText='display:block;background:#dbeafe;color:#1e40af;padding:10px;border-radius:6px';
         res.textContent='🍪 Free Cookie! Tell Ahana you spun the wheel when you pick up!';
+        emailjs.send(EJS_SVC,EJS_TPL,{item:'🎯 Spin the Wheel Win — Free Cookie!',qty:'1',price:'1 free cookie',customer_name:'A customer',contact:'N/A',pickup:'N/A',notes:'N/A',payment:'Spin the Wheel',time:new Date().toLocaleString(),message:`Someone spun the wheel and won a FREE cookie!\nThey will mention it at pickup.\nTime: ${new Date().toLocaleString()}`}).catch(e=>console.log(e));
       } else if(prize.type==='pct'){
         res.style.cssText='display:block;background:#fef9c3;color:#854d0e;padding:10px;border-radius:6px';
         res.textContent='🎉 10% off! Tell Ahana you spun the wheel!';
+        emailjs.send(EJS_SVC,EJS_TPL,{item:'🎯 Spin the Wheel Win — 10% Off!',qty:'1',price:'10% off',customer_name:'A customer',contact:'N/A',pickup:'N/A',notes:'N/A',payment:'Spin the Wheel',time:new Date().toLocaleString(),message:`Someone spun the wheel and won 10% off!\nThey will mention it at pickup.\nTime: ${new Date().toLocaleString()}`}).catch(e=>console.log(e));
       } else {
         res.style.cssText='display:block;background:#fdf0f4;color:#7a6060;padding:10px;border-radius:6px';
         res.textContent='😅 Better luck next time! Try again tomorrow!';
@@ -1244,6 +1281,7 @@ updateStatus();
 renderReviews();
 renderAvail();
 loadCOTM();
+renderPopChart();
 setTimeout(()=>drawWheel(0), 300);
 </script>
 </body>
