@@ -929,7 +929,7 @@ async function renderPopChart() {
   const validNames = items.map(i => i.name);
   const filtered = Object.entries(pop).filter(([name]) => validNames.includes(name));
   const sorted = filtered.sort((a,b)=>b[1]-a[1]).slice(0,6);
-  if (!sorted.length) { el.innerHTML='<p style="color:#bbb;font-size:13px">No orders yet! Add sales to your Sales tab to see the chart 🍪</p>'; return; }
+  if (!sorted.length) { el.innerHTML='<p style="color:#bbb;font-size:13px">No sales yet! Add items to your Sales tab to see the chart 🍪</p>'; return; }
   const max = sorted[0][1];
   el.innerHTML = sorted.map(([name,count]) => `<div class="pop-bar">
     <div class="pop-label">${name}</div>
@@ -1293,6 +1293,7 @@ updateStatus();
 renderReviews();
 renderAvail();
 loadCOTM();
+localStorage.removeItem('cc_pop'); // Only use sheet data for popularity
 renderPopChart();
 setTimeout(()=>drawWheel(0), 300);
 </script>
