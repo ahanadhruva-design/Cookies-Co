@@ -252,16 +252,11 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <a href="https://docs.google.com/spreadsheets/d/1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o/edit" target="_blank" style="color:#1e40af;font-weight:700">Open Google Sheet →</a></div>
 
     <div class="atitle">📝 Blog Posts</div>
-    <div class="abox">
-      <p style="font-size:12px;color:var(--mu);margin-bottom:14px">Add, edit or delete blog posts. They show up on your website instantly!</p>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
-        <input type="text" id="blogTitle" placeholder="Post title..." style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none"/>
-        <input type="text" id="blogEmoji" placeholder="Emoji (e.g. 🍪)" style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none;max-width:120px"/>
-        <input type="text" id="blogCategory" placeholder="Category (e.g. Baking Tips)" style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none"/>
-        <textarea id="blogContent" placeholder="Write your blog post here..." style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none;resize:vertical;min-height:80px"></textarea>
-        <button class="abtn" onclick="addBlogPost()">➕ Add Post</button>
-      </div>
-      <div id="blogAdminList"></div>
+    <div class="infobox">Add blog posts in your <strong>Blog</strong> sheet tab!<br>
+    Columns: <strong>emoji</strong> | <strong>category</strong> | <strong>title</strong> | <strong>content</strong><br><br>
+    <a href="https://docs.google.com/spreadsheets/d/1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o/edit#gid=169173682" target="_blank" style="color:#1e40af;font-weight:700">Open Blog Sheet →</a>
+    &nbsp;&nbsp;
+    <a href="https://docs.google.com/spreadsheets/d/1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o/edit#gid=2019727631" target="_blank" style="color:#1e40af;font-weight:700">Open Team Sheet →</a>
     </div>
 
     <div class="atitle">📋 Orders</div>
@@ -433,43 +428,8 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
   <!-- TEAM PAGE -->
   <div class="sec" id="team">
     <div class="sechdr"><h2>👩‍🍳 Meet the Team</h2></div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px">
-
-      <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:20px;text-align:center">
-        <div style="font-size:3rem;margin-bottom:10px">👑</div>
-        <div style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:4px">Ahana</div>
-        <div style="font-size:11px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Owner & Baker</div>
-        <p style="font-size:12px;color:var(--mu);line-height:1.6">The founder of Cookies & Co.! Ahana bakes, creates, and runs the whole shop with love. 🍪</p>
-      </div>
-
-      <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:20px;text-align:center">
-        <div style="font-size:3rem;margin-bottom:10px">🌸</div>
-        <div style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:4px">Akira</div>
-        <div style="font-size:11px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Crafter & Notebook Maker</div>
-        <p style="font-size:12px;color:var(--mu);line-height:1.6">Akira makes the duct tape wallets and beautiful sequined notebooks by hand! 📓</p>
-      </div>
-
-      <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:20px;text-align:center">
-        <div style="font-size:3rem;margin-bottom:10px">✨</div>
-        <div style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:4px">Shreya</div>
-        <div style="font-size:11px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Ribbon Clip Artist</div>
-        <p style="font-size:12px;color:var(--mu);line-height:1.6">Shreya handcrafts adorable ribbon clips from pipe cleaners — so cute! 🎀</p>
-      </div>
-
-      <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:20px;text-align:center">
-        <div style="font-size:3rem;margin-bottom:10px">🎀</div>
-        <div style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:4px">Natalie</div>
-        <div style="font-size:11px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Baker</div>
-        <p style="font-size:12px;color:var(--mu);line-height:1.6">Natalie bakes the most amazing chocolate chip banana bread loaves! 🍞</p>
-      </div>
-
-      <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:20px;text-align:center">
-        <div style="font-size:3rem;margin-bottom:10px">💫</div>
-        <div style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:4px">Hannah</div>
-        <div style="font-size:11px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Mystery Toy Creator</div>
-        <p style="font-size:12px;color:var(--mu);line-height:1.6">Hannah makes the handmade mystery toys — every one is a surprise! 🎁</p>
-      </div>
-
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px" id="teamGrid">
+      <p style="color:#bbb;font-size:13px">Loading... 🍪</p>
     </div>
   </div>
 
@@ -1468,6 +1428,7 @@ renderReviews();
 renderAvail();
 loadCOTM();
 renderBlog();
+renderTeam();
 setTimeout(()=>drawWheel(0), 300);
 </script>
 </body>
