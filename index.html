@@ -251,6 +251,19 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <div class="infobox">Add announcements in your Google Sheet — <strong>Sheet1, column F</strong> = message, <strong>column G</strong> = type (info/warn/closed)<br>
     <a href="https://docs.google.com/spreadsheets/d/1fnCUGiiYirRlT8sKF0TOQVXcv3_AGYn7TYwzUD9dU7o/edit" target="_blank" style="color:#1e40af;font-weight:700">Open Google Sheet →</a></div>
 
+    <div class="atitle">📝 Blog Posts</div>
+    <div class="abox">
+      <p style="font-size:12px;color:var(--mu);margin-bottom:14px">Add, edit or delete blog posts. They show up on your website instantly!</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+        <input type="text" id="blogTitle" placeholder="Post title..." style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none"/>
+        <input type="text" id="blogEmoji" placeholder="Emoji (e.g. 🍪)" style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none;max-width:120px"/>
+        <input type="text" id="blogCategory" placeholder="Category (e.g. Baking Tips)" style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none"/>
+        <textarea id="blogContent" placeholder="Write your blog post here..." style="padding:8px 12px;border:1.5px solid var(--bd);border-radius:4px;font-family:var(--sa);font-size:13px;outline:none;resize:vertical;min-height:80px"></textarea>
+        <button class="abtn" onclick="addBlogPost()">➕ Add Post</button>
+      </div>
+      <div id="blogAdminList"></div>
+    </div>
+
     <div class="atitle">📋 Orders</div>
     <div id="ordersBox"></div>
   </div>
@@ -464,39 +477,7 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
   <div style="background:var(--pkl);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)" id="blog">
     <div class="sec">
       <div class="sechdr"><h2>📝 Ahana's Blog</h2></div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px">
-
-        <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden">
-          <div style="background:linear-gradient(135deg,#5c3d2e,#3b2314);padding:20px;text-align:center;font-size:3rem">🍪</div>
-          <div style="padding:16px">
-            <div style="font-size:10px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Baking Tips</div>
-            <div style="font-family:var(--se);font-size:1rem;color:var(--br);margin-bottom:8px">How to Make the Perfect Cookie</div>
-            <p style="font-size:12px;color:var(--mu);line-height:1.7">My top 3 tips: always use room temperature butter, don't overmix the dough, and take them out of the oven a little early — they keep cooking on the pan! 🍪</p>
-            <div style="font-size:10px;color:#bbb;margin-top:10px">By Ahana · Cookies & Co.</div>
-          </div>
-        </div>
-
-        <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden">
-          <div style="background:linear-gradient(135deg,#e8a0b4,#c26b8a);padding:20px;text-align:center;font-size:3rem">📿</div>
-          <div style="padding:16px">
-            <div style="font-size:10px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Bracelet Tutorial</div>
-            <div style="font-family:var(--se);font-size:1rem;color:var(--br);margin-bottom:8px">Making Friendship Bracelets — Step by Step</div>
-            <p style="font-size:12px;color:var(--mu);line-height:1.7">Start by cutting 4 strings about 60cm long. Fold in half, tie a knot at the top, and tape it down. Then braid! The secret is keeping the same tension throughout. 💕</p>
-            <div style="font-size:10px;color:#bbb;margin-top:10px">By Ahana · Cookies & Co.</div>
-          </div>
-        </div>
-
-        <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden">
-          <div style="background:linear-gradient(135deg,#f59e0b,#fbbf24);padding:20px;text-align:center;font-size:3rem">💡</div>
-          <div style="padding:16px">
-            <div style="font-size:10px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Business Tips</div>
-            <div style="font-family:var(--se);font-size:1rem;color:var(--br);margin-bottom:8px">How I Started My Mini Business at My Age</div>
-            <p style="font-size:12px;color:var(--mu);line-height:1.7">The biggest thing I learned is to start small! I began with just cookies, then added bracelets when I got more confident. You don't need to do everything at once! 🌟</p>
-            <div style="font-size:10px;color:#bbb;margin-top:10px">By Ahana · Cookies & Co.</div>
-          </div>
-        </div>
-
-      </div>
+      <div class="pgrid" id="blogGrid"></div>
     </div>
   </div>
 
@@ -1129,6 +1110,94 @@ async function renderReviews() {
 }
 
 // ═══════════════════════════════════════
+// 📝 BLOG (reads from Google Sheet)
+// ═══════════════════════════════════════
+async function renderBlog() {
+  const grid = document.getElementById('blogGrid'); if (!grid) return;
+  grid.innerHTML='<p style="color:#bbb;font-size:13px">Loading... 🍪</p>';
+  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=169173682`;
+  const proxies=[
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
+  ];
+  let posts=[];
+  for(const url of proxies){
+    try{
+      const res=await fetch(url,{cache:'no-store'});
+      if(!res.ok)continue;
+      const text=await res.text();
+      if(!text||text.length<5)continue;
+      const lines=text.trim().split('\n');
+      if(!lines[0].toLowerCase().includes('title'))continue;
+      posts=lines.slice(1).map(line=>{
+        const cols=parseLine(line);
+        return{emoji:(cols[0]||'📝').trim(),cat:(cols[1]||'Blog').trim(),title:(cols[2]||'').trim(),content:(cols[3]||'').trim()};
+      }).filter(p=>p.title&&p.content);
+      break;
+    }catch(e){continue;}
+  }
+  const colors=['linear-gradient(135deg,#5c3d2e,#3b2314)','linear-gradient(135deg,#e8a0b4,#c26b8a)','linear-gradient(135deg,#f59e0b,#fbbf24)','linear-gradient(135deg,#c26b8a,#a0527a)'];
+  if(!posts.length){
+    grid.innerHTML='<p style="color:#bbb;font-size:13px">No blog posts yet! Add some in your Blog sheet tab 🍪</p>';
+    return;
+  }
+  grid.innerHTML=posts.map((p,i)=>`<div style="background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+    <div style="background:${colors[i%colors.length]};padding:20px;text-align:center;font-size:3rem">${p.emoji}</div>
+    <div style="padding:16px">
+      <div style="font-size:10px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${p.cat}</div>
+      <div style="font-family:var(--se);font-size:1rem;color:var(--br);margin-bottom:8px">${p.title}</div>
+      <p style="font-size:12px;color:var(--mu);line-height:1.7">${p.content}</p>
+      <div style="font-size:10px;color:#bbb;margin-top:10px">By Ahana · Cookies & Co.</div>
+    </div>
+  </div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// 👩‍🍳 TEAM (reads from Google Sheet)
+// ═══════════════════════════════════════
+async function renderTeam() {
+  const grid = document.getElementById('teamGrid'); if (!grid) return;
+  grid.innerHTML='<p style="color:#bbb;font-size:13px">Loading... 🍪</p>';
+  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=2019727631`;
+  const proxies=[
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
+  ];
+  let members=[];
+  for(const url of proxies){
+    try{
+      const res=await fetch(url,{cache:'no-store'});
+      if(!res.ok)continue;
+      const text=await res.text();
+      if(!text||text.length<5)continue;
+      const lines=text.trim().split('\n');
+      if(!lines[0].toLowerCase().includes('name'))continue;
+      members=lines.slice(1).map(line=>{
+        const cols=parseLine(line);
+        return{name:(cols[0]||'').trim(),role:(cols[1]||'').trim(),emoji:(cols[2]||'🌟').trim(),bio:(cols[3]||'').trim()};
+      }).filter(m=>m.name);
+      break;
+    }catch(e){continue;}
+  }
+  if(!members.length){
+    // Fallback to default team
+    members=[
+      {name:'Ahana',role:'Owner & Baker',emoji:'👑',bio:'The founder of Cookies & Co.! Ahana bakes, creates, and runs the whole shop with love. 🍪'},
+      {name:'Akira',role:'Crafter & Notebook Maker',emoji:'🌸',bio:'Akira makes the duct tape wallets and beautiful sequined notebooks by hand! 📓'},
+      {name:'Shreya',role:'Ribbon Clip Artist',emoji:'✨',bio:'Shreya handcrafts adorable ribbon clips from pipe cleaners — so cute! 🎀'},
+      {name:'Natalie',role:'Baker',emoji:'🎀',bio:'Natalie bakes the most amazing chocolate chip banana bread loaves! 🍞'},
+      {name:'Hannah',role:'Mystery Toy Creator',emoji:'💫',bio:'Hannah makes the handmade mystery toys — every one is a surprise! 🎁'},
+    ];
+  }
+  grid.innerHTML=members.map(m=>`<div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:20px;text-align:center">
+    <div style="font-size:3rem;margin-bottom:10px">${m.emoji}</div>
+    <div style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:4px">${m.name}</div>
+    <div style="font-size:11px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${m.role}</div>
+    <p style="font-size:12px;color:var(--mu);line-height:1.6">${m.bio}</p>
+  </div>`).join('');
+}
+
+// ═══════════════════════════════════════
 // VIP & BIRTHDAY
 // ═══════════════════════════════════════
 function joinVIP() {
@@ -1398,6 +1467,7 @@ updateStatus();
 renderReviews();
 renderAvail();
 loadCOTM();
+renderBlog();
 setTimeout(()=>drawWheel(0), 300);
 </script>
 </body>
