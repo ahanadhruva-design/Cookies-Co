@@ -284,6 +284,7 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <a href="#games">🎮 Games</a>
     <a href="#team">👩‍🍳 Team</a>
     <a href="#blog">📝 Blog</a>
+    <a href="#howmade">🔨 How It's Made</a>
     <a href="#about">About</a>
     <a class="navr" onclick="openCart()">🛒 Cart <span id="cartCount" style="display:none;background:var(--pk);color:#fff;border-radius:50%;width:17px;height:17px;font-size:10px;display:none;align-items:center;justify-content:center;margin-left:3px;font-weight:900;vertical-align:middle" id="cartBadge">0</span></a>
     <a onclick="showLogin()">🔒 Owner Login</a>
@@ -438,6 +439,14 @@ footer{background:var(--br);color:rgba(255,255,255,.7);padding:36px 24px;margin-
     <div class="sec">
       <div class="sechdr"><h2>📝 Ahana's Blog</h2></div>
       <div class="pgrid" id="blogGrid"></div>
+    </div>
+  </div>
+
+  <!-- HOW IT'S MADE -->
+  <div class="sec" id="howmade">
+    <div class="sechdr"><h2>🔨 How It's Made</h2></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px" id="howmadeGrid">
+      <p style="color:#bbb;font-size:13px">Loading... 🍪</p>
     </div>
   </div>
 
@@ -1243,6 +1252,60 @@ function saveCOTM() {
 
 // ═══════════════════════════════════════
 // ═══════════════════════════════════════
+// 🔨 HOW IT'S MADE (reads from sheet)
+// ═══════════════════════════════════════
+async function renderHowMade() {
+  const grid = document.getElementById('howmadeGrid'); if (!grid) return;
+  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=2053479350`;
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
+  ];
+  let howItems = [];
+  for (const url of proxies) {
+    try {
+      const res = await fetch(url, {cache:'no-store'});
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (!text||text.length<5) continue;
+      const lines = text.trim().split('\n');
+      if (!lines[0].toLowerCase().includes('item')) continue;
+      howItems = lines.slice(1).map(line => {
+        const cols = parseLine(line);
+        return {
+          item:(cols[0]||'').trim(),
+          emoji:(cols[1]||'🍪').trim(),
+          steps:(cols[2]||'').trim(),
+          time:(cols[3]||'').trim(),
+          difficulty:(cols[4]||'').trim()
+        };
+      }).filter(h => h.item && h.steps);
+      break;
+    } catch(e) { continue; }
+  }
+  if (!howItems.length) {
+    grid.innerHTML='<p style="color:#bbb;font-size:13px">Add rows to your HowItsMade sheet tab to show how your items are made! 🍪</p>';
+    return;
+  }
+  const diffColors = {'Easy':'#dcfce7','Medium':'#fef9c3','Hard':'#fee2e2'};
+  const diffText = {'Easy':'#15803d','Medium':'#854d0e','Hard':'#991b1b'};
+  grid.innerHTML = howItems.map(h => `
+    <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+      <div style="background:linear-gradient(135deg,#5c3d2e,#3b2314);padding:18px;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:6px">${h.emoji}</div>
+        <div style="font-family:var(--se);font-size:1rem;color:#fff">${h.item}</div>
+      </div>
+      <div style="padding:16px">
+        ${h.difficulty?`<div style="display:inline-block;background:${diffColors[h.difficulty]||'#fef9c3'};color:${diffText[h.difficulty]||'#854d0e'};font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:10px">${h.difficulty}</div>`:''}
+        ${h.time?`<div style="font-size:11px;color:var(--mu);margin-bottom:10px">⏱️ ${h.time}</div>`:''}
+        <div style="font-size:12px;color:var(--tx);line-height:1.8">
+          ${h.steps.split('.').filter(s=>s.trim()).map((s,i)=>`<div style="display:flex;gap:8px;margin-bottom:6px"><span style="background:var(--pk);color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${i+1}</span><span>${s.trim()}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════
 // 🎮 GAME INFO MODAL
 // ═══════════════════════════════════════
 let pendingGameEmail = null;
@@ -1471,6 +1534,7 @@ renderAvail();
 loadCOTM();
 renderBlog();
 renderTeam();
+renderHowMade();
 setTimeout(()=>drawWheel(0), 300);
 </script>
 </body>
