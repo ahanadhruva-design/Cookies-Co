@@ -684,17 +684,16 @@ body.owner-on .cdots-wrap{display:block}
     <div class="sechdr"><h2>Ahana's Shop</h2></div>
     <div class="aboutg">
       <div>
-        <p style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:12px;line-height:1.8">Hi! I'm Ahana — the owner of Cookies & Co. 👑</p>
-        <p style="font-size:13px;color:var(--mu);line-height:1.75">I love baking, making friendship bracelets, and finding cool things to share!</p>
-        <p style="font-size:13px;color:var(--mu);line-height:1.75;margin-top:10px">Big thank you to my team: <strong style="color:var(--br)">Akira, Shreya, Natalie & Hannah</strong> 💕</p>
-        <p style="font-size:13px;color:var(--mu);line-height:1.75;margin-top:10px">All orders are <strong>pickup only</strong> — I'll message you!</p>
+        <p id="aboutBio" style="font-family:var(--se);font-size:1.1rem;color:var(--br);margin-bottom:12px;line-height:1.8">Hi! I'm Ahana — the owner of Cookies & Co. 👑</p>
+        <p id="aboutTeam" style="font-size:13px;color:var(--mu);line-height:1.75;margin-top:10px">Big thank you to my team: <strong style="color:var(--br)">Akira, Shreya, Natalie & Hannah</strong> 💕</p>
+        <p id="aboutNote" style="font-size:13px;color:var(--mu);line-height:1.75;margin-top:10px">All orders are <strong>pickup only</strong> — I'll message you!</p>
         <a class="contact-btn" href="https://mail.google.com/mail/?view=cm&to=ahana.dhruva@gmail.com" target="_blank">💌 Contact Ahana</a>
         <div style="margin-top:16px;background:var(--pkl);border:1px solid var(--bd);border-radius:5px;padding:14px">
           <strong style="color:var(--br);font-size:12px">📅 Weekly Availability</strong>
           <div class="avail-grid" id="availGrid" style="margin-top:8px"></div>
         </div>
       </div>
-      <div class="aboutimg">🍪</div>
+      <div class="aboutimg" id="aboutEmoji">🍪</div>
     </div>
   </div>
 </main>
@@ -1614,6 +1613,38 @@ function saveCOTM() {
 
 // ═══════════════════════════════════════
 // ═══════════════════════════════════════
+// 📖 ABOUT (reads from sheet)
+// ═══════════════════════════════════════
+async function loadAbout() {
+  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=2062970911`;
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
+  ];
+  for (const url of proxies) {
+    try {
+      const res = await fetch(url, {cache:'no-store'});
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (!text||text.length<5) continue;
+      const lines = text.trim().split('\n').slice(1);
+      const data = {};
+      lines.forEach(line => {
+        const cols = parseLine(line);
+        const key = (cols[0]||'').trim().toLowerCase();
+        const val = (cols[1]||'').trim();
+        if (key && val) data[key] = val;
+      });
+      if (data.emoji) document.getElementById('aboutEmoji').textContent = data.emoji;
+      if (data.bio) document.getElementById('aboutBio').textContent = data.bio;
+      if (data.team) document.getElementById('aboutTeam').innerHTML = `Big thank you to my team: <strong style="color:var(--br)">${data.team}</strong> 💕`;
+      if (data.note) document.getElementById('aboutNote').innerHTML = data.note;
+      return;
+    } catch(e) { continue; }
+  }
+}
+
+// ═══════════════════════════════════════
 // 🔨 HOW IT'S MADE (reads from sheet)
 // ═══════════════════════════════════════
 async function renderHowMade() {
@@ -1890,6 +1921,7 @@ function togglePanel() {
 // ═══════════════════════════════════════
 loadItems();
 loadMostPopular();
+loadAbout();
 updateStatus();
 renderReviews();
 renderAvail();
