@@ -498,6 +498,7 @@ body.owner-on .cdots-wrap{display:block}
     <a onclick="doFilter('Toys and fun things',this)">Toys</a>
     <a href="#vip">🌟 VIP & Specials</a>
     <a href="#games">🎮 Games</a>
+    <a href="#photos">📸 Photo Wall</a>
     <a href="#team">👩‍🍳 Team</a>
     <a href="#blog">📝 Blog</a>
     <a href="#howmade">🔨 How It's Made</a>
@@ -655,6 +656,30 @@ body.owner-on .cdots-wrap{display:block}
     </div>
   </div>
 
+  <!-- PHOTO WALL -->
+  <div style="background:var(--pkl);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)" id="photos">
+    <div class="sec">
+      <div class="sechdr"><h2>📸 Customer Photo Wall</h2></div>
+      <p style="font-size:13px;color:var(--mu);margin-bottom:20px;line-height:1.6">See what customers are making and ordering! Want to be on the wall? Submit your photo below! 💕</p>
+
+      <!-- PHOTO GRID -->
+      <div id="photoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:32px">
+        <p style="color:#bbb;font-size:13px">Loading photos... 🍪</p>
+      </div>
+
+      <!-- SUBMIT PHOTO FORM -->
+      <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:22px;max-width:500px">
+        <h3 style="font-family:var(--se);font-size:1.05rem;color:var(--br);margin-bottom:6px">📤 Submit Your Photo!</h3>
+        <p style="font-size:12px;color:var(--mu);margin-bottom:14px;line-height:1.6">Upload your photo to <a href="https://imgur.com/upload" target="_blank" style="color:var(--pkd);font-weight:700">imgur.com</a>, copy the link, and paste it here! Ahana will approve it before it shows on the wall.</p>
+        <div class="fg"><input type="text" id="photoName" placeholder="Your name"/></div>
+        <div class="fg"><input type="text" id="photoUrl" placeholder="Paste your imgur photo link..."/></div>
+        <div class="fg"><input type="text" id="photoCaption" placeholder="Caption (e.g. My cookie box order! 🍪)"/></div>
+        <button class="mbtnp" style="width:100%" onclick="submitPhoto()">Submit Photo! 📸</button>
+        <div id="photoMsg" style="display:none;margin-top:10px;border-radius:5px;padding:10px;font-size:12px;font-weight:700;text-align:center"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- TEAM PAGE -->
   <div class="sec" id="team">
     <div class="sechdr"><h2>👩‍🍳 Meet the Team</h2></div>
@@ -704,6 +729,7 @@ body.owner-on .cdots-wrap{display:block}
     <div class="ftscript">Made with love by Ahana 💕</div>
     <div class="ftlinks">
       <a onclick="doFilter('all',null)">All Items</a>
+      <a href="#photos">Photo Wall</a>
       <a href="#vip">VIP & Specials</a>
       <a href="#games">Games</a>
       <a href="#team">Team</a>
@@ -1423,31 +1449,20 @@ function submitReview() {
 async function renderReviews() {
   const el = document.getElementById('reviewGrid'); if (!el) return;
   el.innerHTML='<p style="color:#bbb;font-size:13px">Loading reviews... 🍪</p>';
-  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=29806301`;
-  const proxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
-    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
-  ];
-  let reviews = [];
-  for (const url of proxies) {
-    try {
-      const res = await fetch(url,{cache:'no-store'});
-      if (!res.ok) continue;
-      const text = await res.text();
-      if (!text||text.length<5) continue;
-      const lines = text.trim().split('\n');
-      // VALIDATE: must have 'stars' in header row
-      if (!lines[0].toLowerCase().includes('stars')) continue;
-      reviews = lines.slice(1).map(line => {
-        const cols = parseLine(line);
-        const stars = Math.min(5, Math.max(1, parseInt(cols[1])||5));
-        return {name:(cols[0]||'').trim(), stars, text:(cols[2]||'').trim(), date:(cols[3]||'').trim()};
-      }).filter(r => r.name && r.text);
-      break;
-    } catch(e) { continue; }
+  const text = await fetchSheet(29806301);
+  let reviews=[];
+  if(text){
+    const lines=text.trim().split('\n');
+    if(lines[0].toLowerCase().includes('stars')){
+      reviews=lines.slice(1).map(line=>{
+        const cols=parseLine(line);
+        const stars=Math.min(5,Math.max(1,parseInt(cols[1])||5));
+        return{name:(cols[0]||'').trim(),stars,text:(cols[2]||'').trim(),date:(cols[3]||'').trim()};
+      }).filter(r=>r.name&&r.text);
+    }
   }
-  if (!reviews.length) { el.innerHTML='<p style="color:#bbb;font-size:13px">No reviews yet — be the first! 💕</p>'; return; }
-  el.innerHTML = reviews.map(r=>`<div class="review-card">
+  if(!reviews.length){el.innerHTML='<p style="color:#bbb;font-size:13px">No reviews yet — be the first! 💕</p>';return;}
+  el.innerHTML=reviews.map(r=>`<div class="review-card">
     <div class="rc-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
     <div class="rc-text">"${r.text}"</div>
     <div class="rc-name">— ${r.name}${r.date?' · '+r.date:''}</div>
@@ -1457,35 +1472,37 @@ async function renderReviews() {
 // ═══════════════════════════════════════
 // 📝 BLOG (reads from Google Sheet)
 // ═══════════════════════════════════════
-async function renderBlog() {
-  const grid = document.getElementById('blogGrid'); if (!grid) return;
-  grid.innerHTML='<p style="color:#bbb;font-size:13px">Loading... 🍪</p>';
-  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=169173682`;
+async function fetchSheet(gid) {
+  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
   const proxies=[
     `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
     `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(CSV)}&_=${Date.now()}`,
   ];
-  let posts=[];
   for(const url of proxies){
     try{
       const res=await fetch(url,{cache:'no-store'});
       if(!res.ok)continue;
       const text=await res.text();
       if(!text||text.length<5)continue;
-      const lines=text.trim().split('\n');
-      if(!lines[0].toLowerCase().includes('title'))continue;
-      posts=lines.slice(1).map(line=>{
-        const cols=parseLine(line);
-        return{emoji:(cols[0]||'📝').trim(),cat:(cols[1]||'Blog').trim(),title:(cols[2]||'').trim(),content:(cols[3]||'').trim()};
-      }).filter(p=>p.title&&p.content);
-      break;
+      return text;
     }catch(e){continue;}
   }
+  return null;
+}
+
+async function renderBlog() {
+  const grid = document.getElementById('blogGrid'); if (!grid) return;
+  grid.innerHTML='<p style="color:#bbb;font-size:13px">Loading... 🍪</p>';
+  const text = await fetchSheet(169173682);
+  if(!text){grid.innerHTML='<p style="color:#bbb;font-size:13px">Could not load blog 😢</p>';return;}
+  const lines=text.trim().split('\n');
+  const posts=lines.slice(1).map(line=>{
+    const cols=parseLine(line);
+    return{emoji:(cols[0]||'📝').trim(),cat:(cols[1]||'Blog').trim(),title:(cols[2]||'').trim(),content:(cols[3]||'').trim()};
+  }).filter(p=>p.title&&p.content);
   const colors=['linear-gradient(135deg,#5c3d2e,#3b2314)','linear-gradient(135deg,#e8a0b4,#c26b8a)','linear-gradient(135deg,#f59e0b,#fbbf24)','linear-gradient(135deg,#c26b8a,#a0527a)'];
-  if(!posts.length){
-    grid.innerHTML='<p style="color:#bbb;font-size:13px">No blog posts yet! Add some in your Blog sheet tab 🍪</p>';
-    return;
-  }
+  if(!posts.length){grid.innerHTML='<p style="color:#bbb;font-size:13px">No blog posts yet! Add some in your Blog sheet tab 🍪</p>';return;}
   grid.innerHTML=posts.map((p,i)=>`<div style="background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden">
     <div style="background:${colors[i%colors.length]};padding:20px;text-align:center;font-size:3rem">${p.emoji}</div>
     <div style="padding:16px">
@@ -1503,29 +1520,16 @@ async function renderBlog() {
 async function renderTeam() {
   const grid = document.getElementById('teamGrid'); if (!grid) return;
   grid.innerHTML='<p style="color:#bbb;font-size:13px">Loading... 🍪</p>';
-  const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=2019727631`;
-  const proxies=[
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
-    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
-  ];
+  const text = await fetchSheet(2019727631);
   let members=[];
-  for(const url of proxies){
-    try{
-      const res=await fetch(url,{cache:'no-store'});
-      if(!res.ok)continue;
-      const text=await res.text();
-      if(!text||text.length<5)continue;
-      const lines=text.trim().split('\n');
-      if(!lines[0].toLowerCase().includes('name'))continue;
-      members=lines.slice(1).map(line=>{
-        const cols=parseLine(line);
-        return{name:(cols[0]||'').trim(),role:(cols[1]||'').trim(),emoji:(cols[2]||'🌟').trim(),bio:(cols[3]||'').trim()};
-      }).filter(m=>m.name);
-      break;
-    }catch(e){continue;}
+  if(text){
+    const lines=text.trim().split('\n');
+    members=lines.slice(1).map(line=>{
+      const cols=parseLine(line);
+      return{name:(cols[0]||'').trim(),role:(cols[1]||'').trim(),emoji:(cols[2]||'🌟').trim(),bio:(cols[3]||'').trim()};
+    }).filter(m=>m.name);
   }
   if(!members.length){
-    // Fallback to default team
     members=[
       {name:'Ahana',role:'Owner & Baker',emoji:'👑',bio:'The founder of Cookies & Co.! Ahana bakes, creates, and runs the whole shop with love. 🍪'},
       {name:'Akira',role:'Crafter & Notebook Maker',emoji:'🌸',bio:'Akira makes the duct tape wallets and beautiful sequined notebooks by hand! 📓'},
@@ -1613,35 +1617,79 @@ function saveCOTM() {
 
 // ═══════════════════════════════════════
 // ═══════════════════════════════════════
+// 📸 PHOTO WALL
+// ═══════════════════════════════════════
+async function renderPhotoWall() {
+  const grid = document.getElementById('photoGrid'); if (!grid) return;
+  const text = await fetchSheet(1433619164);
+  let photos = [];
+  if (text) {
+    const lines = text.trim().split('\n');
+    photos = lines.slice(1).map(line => {
+      const cols = parseLine(line);
+      return {
+        name: (cols[0]||'').trim(),
+        photo: (cols[1]||'').trim(),
+        caption: (cols[2]||'').trim(),
+        approved: (cols[3]||'').trim().toLowerCase()
+      };
+    }).filter(p => p.photo && p.approved === 'yes');
+  }
+  if (!photos.length) {
+    grid.innerHTML='<p style="color:#bbb;font-size:13px">No photos yet — be the first to submit! 📸</p>';
+    return;
+  }
+  grid.innerHTML = photos.map(p => `
+    <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(92,61,46,.06)">
+      <div style="aspect-ratio:1;overflow:hidden;background:var(--pkl)">
+        <img src="${p.photo}" alt="${p.caption}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='<div style=padding:20px;text-align:center;font-size:2rem>📸</div>'"/>
+      </div>
+      <div style="padding:12px">
+        ${p.caption?`<p style="font-size:12px;color:var(--tx);margin-bottom:4px;line-height:1.5">"${p.caption}"</p>`:''}
+        ${p.name?`<p style="font-size:11px;font-weight:700;color:var(--pkd)">— ${p.name}</p>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function submitPhoto() {
+  const name = document.getElementById('photoName').value.trim();
+  const url = document.getElementById('photoUrl').value.trim();
+  const caption = document.getElementById('photoCaption').value.trim();
+  const msg = document.getElementById('photoMsg');
+  if (!name||!url) { alert('Please fill in your name and photo link!'); return; }
+  emailjs.send(EJS_SVC, EJS_TPL, {
+    item: '📸 New Photo Wall Submission!',
+    qty: '1', price: 'N/A',
+    customer_name: name, contact: 'N/A', pickup: 'N/A',
+    notes: `Caption: ${caption}\nPhoto: ${url}`,
+    payment: 'Photo Wall', time: new Date().toLocaleString(),
+    message: `New photo wall submission!\nName: ${name}\nCaption: ${caption}\nPhoto URL: ${url}\n\nTo approve: add a row to your Photos sheet tab with these details and put "yes" in column D!`
+  }).catch(e => console.log(e));
+  document.getElementById('photoName').value = '';
+  document.getElementById('photoUrl').value = '';
+  document.getElementById('photoCaption').value = '';
+  msg.style.cssText = 'display:block;background:#dcfce7;color:#15803d;border:1px solid #86efac;border-radius:5px;padding:10px';
+  msg.textContent = `✅ Thanks ${name}! Ahana will review your photo and add it to the wall soon! 💕`;
+}
+
+// ═══════════════════════════════════════
 // 📖 ABOUT (reads from sheet)
 // ═══════════════════════════════════════
 async function loadAbout() {
-  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=2062970911`;
-  const proxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
-    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
-  ];
-  for (const url of proxies) {
-    try {
-      const res = await fetch(url, {cache:'no-store'});
-      if (!res.ok) continue;
-      const text = await res.text();
-      if (!text||text.length<5) continue;
-      const lines = text.trim().split('\n').slice(1);
-      const data = {};
-      lines.forEach(line => {
-        const cols = parseLine(line);
-        const key = (cols[0]||'').trim().toLowerCase();
-        const val = (cols[1]||'').trim();
-        if (key && val) data[key] = val;
-      });
-      if (data.emoji) document.getElementById('aboutEmoji').textContent = data.emoji;
-      if (data.bio) document.getElementById('aboutBio').textContent = data.bio;
-      if (data.team) document.getElementById('aboutTeam').innerHTML = `Big thank you to my team: <strong style="color:var(--br)">${data.team}</strong> 💕`;
-      if (data.note) document.getElementById('aboutNote').innerHTML = data.note;
-      return;
-    } catch(e) { continue; }
-  }
+  const text = await fetchSheet(2062970911);
+  if(!text) return;
+  const lines=text.trim().split('\n').slice(1);
+  const data={};
+  lines.forEach(line=>{
+    const cols=parseLine(line);
+    const key=(cols[0]||'').trim().toLowerCase();
+    const val=(cols[1]||'').trim();
+    if(key&&val) data[key]=val;
+  });
+  if(data.emoji) document.getElementById('aboutEmoji').textContent=data.emoji;
+  if(data.bio) document.getElementById('aboutBio').textContent=data.bio;
+  if(data.team) document.getElementById('aboutTeam').innerHTML=`Big thank you to my team: <strong style="color:var(--br)">${data.team}</strong> 💕`;
+  if(data.note) document.getElementById('aboutNote').innerHTML=data.note;
 }
 
 // ═══════════════════════════════════════
@@ -1649,40 +1697,19 @@ async function loadAbout() {
 // ═══════════════════════════════════════
 async function renderHowMade() {
   const grid = document.getElementById('howmadeGrid'); if (!grid) return;
-  const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=2053479350`;
-  const proxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
-    `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
-  ];
-  let howItems = [];
-  for (const url of proxies) {
-    try {
-      const res = await fetch(url, {cache:'no-store'});
-      if (!res.ok) continue;
-      const text = await res.text();
-      if (!text||text.length<5) continue;
-      const lines = text.trim().split('\n');
-      if (!lines[0].toLowerCase().includes('item')) continue;
-      howItems = lines.slice(1).map(line => {
-        const cols = parseLine(line);
-        return {
-          item:(cols[0]||'').trim(),
-          emoji:(cols[1]||'🍪').trim(),
-          steps:(cols[2]||'').trim(),
-          time:(cols[3]||'').trim(),
-          difficulty:(cols[4]||'').trim()
-        };
-      }).filter(h => h.item && h.steps);
-      break;
-    } catch(e) { continue; }
+  const text = await fetchSheet(2053479350);
+  let howItems=[];
+  if(text){
+    const lines=text.trim().split('\n');
+    howItems=lines.slice(1).map(line=>{
+      const cols=parseLine(line);
+      return{item:(cols[0]||'').trim(),emoji:(cols[1]||'🍪').trim(),steps:(cols[2]||'').trim(),time:(cols[3]||'').trim(),difficulty:(cols[4]||'').trim()};
+    }).filter(h=>h.item&&h.steps);
   }
-  if (!howItems.length) {
-    grid.innerHTML='<p style="color:#bbb;font-size:13px">Add rows to your HowItsMade sheet tab to show how your items are made! 🍪</p>';
-    return;
-  }
-  const diffColors = {'Easy':'#dcfce7','Medium':'#fef9c3','Hard':'#fee2e2'};
-  const diffText = {'Easy':'#15803d','Medium':'#854d0e','Hard':'#991b1b'};
-  grid.innerHTML = howItems.map(h => `
+  if(!howItems.length){grid.innerHTML='<p style="color:#bbb;font-size:13px">Add rows to your HowItsMade sheet tab! 🍪</p>';return;}
+  const diffColors={'Easy':'#dcfce7','Medium':'#fef9c3','Hard':'#fee2e2'};
+  const diffText={'Easy':'#15803d','Medium':'#854d0e','Hard':'#991b1b'};
+  grid.innerHTML=howItems.map(h=>`
     <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden">
       <div style="background:linear-gradient(135deg,#5c3d2e,#3b2314);padding:18px;text-align:center">
         <div style="font-size:2.5rem;margin-bottom:6px">${h.emoji}</div>
@@ -1927,6 +1954,7 @@ renderReviews();
 renderAvail();
 loadCOTM();
 renderBlog();
+renderPhotoWall();
 renderTeam();
 renderHowMade();
 renderRecentlyViewed();
