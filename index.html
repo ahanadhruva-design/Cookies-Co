@@ -498,6 +498,8 @@ body.owner-on .cdots-wrap{display:block}
     <a onclick="doFilter('Toys and fun things',this)">Toys</a>
     <a href="#vip">🌟 VIP & Specials</a>
     <a href="#games">🎮 Games</a>
+    <a href="#faq">💬 Q&A</a>
+    <a href="#faq">💬 Q&A</a>
     <a href="#photos">📸 Photo Wall</a>
     <a href="#team">👩‍🍳 Team</a>
     <a href="#blog">📝 Blog</a>
@@ -656,6 +658,40 @@ body.owner-on .cdots-wrap{display:block}
     </div>
   </div>
 
+  <!-- FAQ -->
+  <div class="sec" id="faq">
+    <div class="sechdr"><h2>❓ Frequently Asked Questions</h2></div>
+    <div id="faqList" style="max-width:700px">
+      <p style="color:#bbb;font-size:13px">Loading... 🍪</p>
+    </div>
+    <div style="background:var(--pkl);border:1px solid var(--bd);border-radius:8px;padding:18px;margin-top:24px;max-width:700px">
+      <p style="font-size:13px;color:var(--br);font-weight:700;margin-bottom:6px">Still have a question? 💕</p>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:12px">Contact Ahana directly and she'll get back to you!</p>
+      <a class="contact-btn" href="https://mail.google.com/mail/?view=cm&to=ahana.dhruva@gmail.com" target="_blank">💌 Ask Ahana</a>
+    </div>
+  </div>
+
+  <!-- Q&A -->
+  <div class="sec" id="faq">
+    <div class="sechdr"><h2>❓ Q & A</h2></div>
+
+    <!-- QUESTION FORM -->
+    <div style="background:linear-gradient(135deg,#fdf0f4,#fce4ef);border:1.5px solid var(--pk);border-radius:8px;padding:20px;max-width:600px;margin-bottom:28px">
+      <h3 style="font-family:var(--se);font-size:1.05rem;color:var(--br);margin-bottom:6px">💬 Ask Ahana a Question!</h3>
+      <p style="font-size:12px;color:var(--mu);margin-bottom:14px">Have a question about an item, pickup, or anything else? Ask away!</p>
+      <div class="fg"><input type="text" id="qaName" placeholder="Your name"/></div>
+      <div class="fg"><textarea id="qaQuestion" placeholder="What's your question?" style="min-height:70px"></textarea></div>
+      <button class="mbtnp" style="width:100%" onclick="submitQuestion()">Ask! 💬</button>
+      <div id="qaMsg" style="display:none;margin-top:10px;border-radius:5px;padding:10px;font-size:12px;font-weight:700;text-align:center"></div>
+    </div>
+
+    <!-- ANSWERS -->
+    <div style="max-width:700px">
+      <h3 style="font-family:var(--se);font-size:1.05rem;color:var(--br);margin-bottom:14px">📋 Questions & Answers</h3>
+      <div id="faqList"><p style="color:#bbb;font-size:13px">Loading... 🍪</p></div>
+    </div>
+  </div>
+
   <!-- PHOTO WALL -->
   <div style="background:var(--pkl);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)" id="photos">
     <div class="sec">
@@ -729,6 +765,7 @@ body.owner-on .cdots-wrap{display:block}
     <div class="ftscript">Made with love by Ahana 💕</div>
     <div class="ftlinks">
       <a onclick="doFilter('all',null)">All Items</a>
+      <a href="#faq">Q&A</a>
       <a href="#photos">Photo Wall</a>
       <a href="#vip">VIP & Specials</a>
       <a href="#games">Games</a>
@@ -1617,6 +1654,97 @@ function saveCOTM() {
 
 // ═══════════════════════════════════════
 // ═══════════════════════════════════════
+// ❓ FAQ
+// ═══════════════════════════════════════
+const DEFAULT_FAQS = [
+  {q:'How do I order?', a:'Just add items to your cart and checkout! Ahana will email you to arrange pickup.'},
+  {q:'Where do I pick up my order?', a:'Ahana is in the San Francisco Bay Area. She\'ll message you with the pickup details after you order!'},
+  {q:'How do I pay?', a:'You can pay by Venmo, cash, or check at pickup. No payment needed upfront!'},
+  {q:'How long does it take?', a:'Most orders are ready within 1-3 days. Ahana will let you know the exact time!'},
+  {q:'Can I customize my order?', a:'Yes! Add your special requests in the notes when you checkout — like bracelet colors or cookie flavors.'},
+  {q:'Do you deliver?', a:'Not yet — pickup only for now! Ahana will arrange a convenient pickup time with you.'},
+];
+
+async function renderFAQ() {
+  const el = document.getElementById('faqList'); if (!el) return;
+  const text = await fetchSheet(1662045174);
+  let faqs = [];
+  if (text) {
+    const lines = text.trim().split('\n');
+    faqs = lines.slice(1).map(line => {
+      const cols = parseLine(line);
+      return {q:(cols[0]||'').trim(), a:(cols[1]||'').trim()};
+    }).filter(f => f.q && f.a);
+  }
+  if (!faqs.length) faqs = DEFAULT_FAQS;
+  el.innerHTML = faqs.map((f,i) => `
+    <div style="border:1px solid var(--bd);border-radius:8px;margin-bottom:10px;overflow:hidden;background:#fff">
+      <button onclick="toggleFAQ(${i})" style="width:100%;text-align:left;padding:16px 18px;background:none;border:none;font-family:var(--sa);font-size:14px;font-weight:700;color:var(--br);cursor:pointer;display:flex;justify-content:space-between;align-items:center">
+        <span>${f.q}</span>
+        <span id="faq-arrow-${i}" style="font-size:18px;transition:transform .2s">﹢</span>
+      </button>
+      <div id="faq-ans-${i}" style="display:none;padding:0 18px 16px;font-size:13px;color:var(--mu);line-height:1.7;border-top:1px solid var(--bd)">${f.a}</div>
+    </div>`).join('');
+}
+
+function toggleFAQ(i) {
+  const ans = document.getElementById('faq-ans-'+i);
+  const arrow = document.getElementById('faq-arrow-'+i);
+  const isOpen = ans.style.display !== 'none';
+  ans.style.display = isOpen ? 'none' : 'block';
+  arrow.textContent = isOpen ? '﹢' : '﹣';
+  arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+// ═══════════════════════════════════════
+// ❓ Q&A
+// ═══════════════════════════════════════
+async function renderFAQ() {
+  const el = document.getElementById('faqList'); if (!el) return;
+  const text = await fetchSheet(1662045174);
+  let faqs = [];
+  if (text) {
+    const lines = text.trim().split('\n');
+    faqs = lines.slice(1).map(line => {
+      const cols = parseLine(line);
+      return {q:(cols[0]||'').trim(), a:(cols[1]||'').trim()};
+    }).filter(f => f.q && f.a);
+  }
+  if (!faqs.length) {
+    el.innerHTML='<p style="color:#bbb;font-size:13px">No questions yet! Be the first to ask one above 💬</p>';
+    return;
+  }
+  el.innerHTML = faqs.map((f, i) => `
+    <div style="border:1px solid var(--bd);border-radius:8px;margin-bottom:12px;overflow:hidden;background:#fff">
+      <div style="padding:14px 18px;background:var(--pkl);display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:1.2rem">❓</span>
+        <span style="font-size:13px;font-weight:700;color:var(--br)">${f.q}</span>
+      </div>
+      <div style="padding:14px 18px;display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:1.2rem">💬</span>
+        <span style="font-size:13px;color:var(--mu);line-height:1.7">${f.a}</span>
+      </div>
+    </div>`).join('');
+}
+
+function submitQuestion() {
+  const name = document.getElementById('qaName').value.trim();
+  const question = document.getElementById('qaQuestion').value.trim();
+  const msg = document.getElementById('qaMsg');
+  if (!name||!question) { alert('Please fill in your name and question!'); return; }
+  emailjs.send(EJS_SVC, EJS_TPL, {
+    item:'💬 New Q&A Question!', qty:'1', price:'N/A',
+    customer_name:name, contact:'N/A', pickup:'N/A',
+    notes:question, payment:'Q&A', time:new Date().toLocaleString(),
+    message:`New question from ${name}!\n\nQuestion: ${question}\n\nTo answer: go to your Q&A sheet tab and add:\nColumn A: ${question}\nColumn B: your answer`
+  }).catch(e=>console.log(e));
+  document.getElementById('qaName').value='';
+  document.getElementById('qaQuestion').value='';
+  msg.style.cssText='display:block;background:#dcfce7;color:#15803d;border:1px solid #86efac;border-radius:5px;padding:10px';
+  msg.textContent=`✅ Thanks ${name}! Ahana will answer your question soon! 💕`;
+}
+
+// ═══════════════════════════════════════
 // 📸 PHOTO WALL
 // ═══════════════════════════════════════
 async function renderPhotoWall() {
@@ -1954,6 +2082,7 @@ renderReviews();
 renderAvail();
 loadCOTM();
 renderBlog();
+renderFAQ();
 renderPhotoWall();
 renderTeam();
 renderHowMade();
