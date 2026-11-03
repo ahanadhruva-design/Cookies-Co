@@ -774,7 +774,8 @@ body.owner-on .cdots-wrap{display:block}
       <a href="#howmade">How It's Made</a>
       <a href="#about">About</a>
     </div>
-    <div class="ftcopy">© 2025 Cookies & Co. · Ahana's Shop · Pickup orders only · All items handmade with 💕</div>
+    <div class="ftcopy">© <span class="ftyear">2026</span> <span id="ftText">Cookies & Co. · Ahana's Shop · Pickup orders only · All items handmade with 💕</span></div>
+<script>document.querySelectorAll(".ftyear").forEach(e=>e.textContent=new Date().getFullYear())</script>
   </div>
 </footer>
 
@@ -1822,6 +1823,7 @@ async function loadAbout() {
   if(data.bio) document.getElementById('aboutBio').textContent=data.bio;
   if(data.team) document.getElementById('aboutTeam').innerHTML=`Big thank you to my team: <strong style="color:var(--br)">${data.team}</strong> 💕`;
   if(data.note) document.getElementById('aboutNote').innerHTML=data.note;
+  if(data.footer){const f=document.getElementById('ftText');if(f)f.textContent=data.footer;}
 }
 
 // ═══════════════════════════════════════
