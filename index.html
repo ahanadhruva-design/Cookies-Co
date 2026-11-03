@@ -1540,7 +1540,7 @@ async function renderBlog() {
   const lines=text.trim().split('\n');
   const posts=lines.slice(1).map(line=>{
     const cols=parseLine(line);
-    return{emoji:(cols[0]||'📝').trim(),cat:(cols[1]||'Blog').trim(),title:(cols[2]||'').trim(),content:(cols[3]||'').trim()};
+    return{emoji:(cols[0]||'📝').trim(),cat:(cols[1]||'Blog').trim(),title:(cols[2]||'').trim(),content:(cols[3]||'').trim(),author:(cols[4]||'').trim()};
   }).filter(p=>p.title&&p.content);
   const colors=['linear-gradient(135deg,#5c3d2e,#3b2314)','linear-gradient(135deg,#e8a0b4,#c26b8a)','linear-gradient(135deg,#f59e0b,#fbbf24)','linear-gradient(135deg,#c26b8a,#a0527a)'];
   if(!posts.length){grid.innerHTML='<p style="color:#bbb;font-size:13px">No blog posts yet! Add some in your Blog sheet tab 🍪</p>';return;}
@@ -1550,7 +1550,7 @@ async function renderBlog() {
       <div style="font-size:10px;font-weight:700;color:var(--pkd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${p.cat}</div>
       <div style="font-family:var(--se);font-size:1rem;color:var(--br);margin-bottom:8px">${p.title}</div>
       <p style="font-size:12px;color:var(--mu);line-height:1.7">${p.content}</p>
-      <div style="font-size:10px;color:#bbb;margin-top:10px">By Ahana · Cookies & Co.</div>
+      <div style="font-size:10px;color:#bbb;margin-top:10px">By ${(p.author||'Ahana').replace(/[<>&]/g,'')} · Cookies & Co.</div>
     </div>
   </div>`).join('');
 }
