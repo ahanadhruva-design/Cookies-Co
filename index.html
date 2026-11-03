@@ -1841,7 +1841,8 @@ async function renderHowMade() {
   if(!howItems.length){grid.innerHTML='<p style="color:#bbb;font-size:13px">Add rows to your HowItsMade sheet tab! 🍪</p>';return;}
   const diffColors={'Easy':'#dcfce7','Medium':'#fef9c3','Hard':'#fee2e2'};
   const diffText={'Easy':'#15803d','Medium':'#854d0e','Hard':'#991b1b'};
-  grid.innerHTML=howItems.map(h=>`
+  HOW_ITEMS=howItems;
+  grid.innerHTML=howItems.map((h,hi)=>`
     <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;overflow:hidden">
       <div style="background:linear-gradient(135deg,#5c3d2e,#3b2314);padding:18px;text-align:center">
         <div style="font-size:2.5rem;margin-bottom:6px">${h.emoji}</div>
@@ -1853,8 +1854,39 @@ async function renderHowMade() {
         <div style="font-size:12px;color:var(--tx);line-height:1.8">
           ${h.steps.split('.').filter(s=>s.trim()).map((s,i)=>`<div style="display:flex;gap:8px;margin-bottom:6px"><span style="background:var(--pk);color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${i+1}</span><span>${s.trim()}</span></div>`).join('')}
         </div>
+        <button onclick="printRecipe(${hi})" style="margin-top:12px;width:100%;background:#5c3d2e;color:#fff;border:none;border-radius:20px;padding:9px 14px;font-weight:700;font-size:12px;cursor:pointer">🖨️ Print Recipe</button>
       </div>
     </div>`).join('');
+}
+
+let HOW_ITEMS=[];
+function printRecipe(idx){
+  const h=HOW_ITEMS[idx]; if(!h) return;
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let ingr='', instr=h.steps;
+  const m=h.steps.match(/ingredients\s*:([\s\S]*?)instructions\s*:([\s\S]*)/i);
+  if(m){ingr=m[1];instr=m[2];}
+  let tip='';
+  const t=instr.match(/(💡?\s*tip\s*:[\s\S]*)$/i);
+  if(t){tip=t[1].replace(/^💡?\s*tip\s*:\s*/i,'').trim();instr=instr.slice(0,t.index);}
+  const ingList=ingr.split(',').map(x=>x.trim()).filter(Boolean);
+  const steps=instr.split(/step\s*\d+\s*:|\.(?!\d)/i).map(x=>x.trim()).filter(Boolean);
+  const w=window.open('','_blank');
+  if(!w){alert('Please allow pop-ups to print the recipe.');return;}
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(h.item)} — Cookies & Co. Recipe</title>
+<style>body{font-family:Georgia,serif;color:#3b2314;max-width:640px;margin:40px auto;padding:0 24px;line-height:1.6}
+h1{font-size:2rem;margin:0 0 4px}.meta{color:#8a6a5a;font-size:14px;margin-bottom:24px}
+h2{font-size:1.15rem;border-bottom:2px solid #e8a0b4;padding-bottom:4px;margin-top:28px}
+ul,ol{padding-left:22px}li{margin-bottom:6px}.tip{background:#fdf2f6;border-left:4px solid #c26b8a;padding:10px 14px;margin-top:24px}
+.foot{margin-top:40px;font-size:12px;color:#8a6a5a;text-align:center}@media print{body{margin:0 auto}}</style></head><body>
+<h1>${esc(h.emoji)} ${esc(h.item)}</h1>
+<div class="meta">${h.time?'⏱️ '+esc(h.time):''}${h.time&&h.difficulty?' · ':''}${h.difficulty?'Difficulty: '+esc(h.difficulty):''}</div>
+${ingList.length?`<h2>Ingredients</h2><ul>${ingList.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+<h2>Instructions</h2><ol>${steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>
+${tip?`<div class="tip">💡 <b>Tip:</b> ${esc(tip)}</div>`:''}
+<div class="foot">From Cookies & Co. · Made with love by Ahana 💕</div>
+<script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`);
+  w.document.close();
 }
 
 // ═══════════════════════════════════════
