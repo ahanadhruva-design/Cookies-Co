@@ -964,6 +964,7 @@ const FALLBACK = [
 async function loadItems() {
   const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`;
   const proxies = [
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&gid=0&_=${Date.now()}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
     `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(CSV)}`,
@@ -1051,6 +1052,7 @@ let mostPopularItem = ''; // set after loading Sales sheet
 async function loadMostPopular() {
   const CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=1876372372`;
   const proxies = [
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&gid=1876372372&_=${Date.now()}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
     `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
   ];
@@ -1512,6 +1514,7 @@ async function renderReviews() {
 async function fetchSheet(gid) {
   const CSV=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
   const proxies=[
+    `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&gid=${gid}&_=${Date.now()}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(CSV)}&_=${Date.now()}`,
     `https://corsproxy.io/?${encodeURIComponent(CSV)}&_=${Date.now()}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(CSV)}&_=${Date.now()}`,
