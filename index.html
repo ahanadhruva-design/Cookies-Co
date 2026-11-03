@@ -1078,7 +1078,8 @@ async function loadMostPopular() {
 function makeCard(i) {
   const img = i.ph ? `<img src="${i.ph}" alt="${i.name}" loading="lazy" onerror="this.style.display='none'"/>` : '';
   const fb = !i.ph ? (EM[i.cat]||'🛍️') : '';
-  const isPopular = mostPopularItem && i.name === mostPopularItem;
+  const tg = String(i.tag||'').trim().toLowerCase();
+  const isPopular = tg==='popular' || tg==='most popular';
   const inWishlist = wishlist.includes(i.id);
   const stock = i.stock !== undefined && i.stock !== '' ? parseInt(i.stock) : null;
   const isPreorder = i.preorder === 'yes' || i.preorder === 'true';
@@ -1089,8 +1090,8 @@ function makeCard(i) {
   else if (isSoldOut) badge = '<div class="badge-low">😢 Sold Out</div>';
   else if (stock !== null && stock <= 3 && stock > 0) badge = `<div class="badge-low">🔥 Only ${stock} left!</div>`;
   else if (isPopular) badge = '<div class="badge-pop">🔥 Most Popular</div>';
-  else if (i.tag==='new') badge = '<div class="badge-new">🆕 New!</div>';
-  else if (i.tag==='bestseller') badge = '<div class="badge-best">🏆 Best Seller</div>';
+  else if (tg==='new') badge = '<div class="badge-new">🆕 New!</div>';
+  else if (tg==='bestseller' || tg==='best seller') badge = '<div class="badge-best">🏆 Best Seller</div>';
 
   const discAmt = activeDiscount ? Math.max(0, i.amt - DISC_AMT) : null;
   const priceHtml = discAmt !== null
@@ -2078,7 +2079,7 @@ function togglePanel() {
 // INIT
 // ═══════════════════════════════════════
 loadItems();
-loadMostPopular();
+// loadMostPopular(); // badge now comes from the 'tag' column
 loadAbout();
 updateStatus();
 renderReviews();
